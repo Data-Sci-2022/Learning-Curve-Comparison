@@ -1,0 +1,55 @@
+---
+title: "Project Plan_Soobin"
+author: "Soobin Choi"
+date: "2022-10-01"
+output: 
+  github_document: 
+    toc: TRUE
+---
+
+
+# 1. Comparing English speakers' Korean learning development with Korean speakers' English learning development.
+
+
+## Brief summary
+
+I would like to compare the process of the development of L2 learners with different background. According to Foreign Service Institute (FIS), for English native speakers, Korean is one of the most difficult languages to learn. Same thing would apply to Koreans; one of the most difficult languages to learn for Koreans is English. So, I would like to compare each group of speakers' development process in terms of lexical diversity and syntactic complexity based on their L2 level.
+
+
+## Data 
+
+For this project, I am considering using two datasets, which are PELIC, and a data set from an article about Korean L2 writing. Below is the article's title and its authors:
+
+Lim, K., Song, J., & Park, J. (2022). Neural automated writing evaluation for Korean L2 writing. Natural Language Engineering, _Cambridge University Press, 1-23._ https://doi.org/10.1017/S1351324922000298. Lim, K. and Song, J. contributed equally.
+
+Both data sets are available for public use.
+
+
+## Analysis
+
+Since Korean is a synthetic language and has a rich vocabulary pool of honorifics which are reflected to most of the ending morphemes, there are numerous morphemes that can be considered conjunctive particles. Therefore, I assume that at the relatively lower level of L2 speakers, English learners have a higher degree of syntactic complexity. However, for the upper level of L2 speakers, Korean learners shows higher level of syntactic complexity. In terms of lexical diversity, I assume no difference between two groups.
+
+
+
+# 2. Predicting the type of movie review: positive or negative
+
+## Brief summary 
+
+I would like to see if there is a certain type of tendency in terms of using specific vocabularies depending on whether a review is a positive one or not, and would like to make a prediction model out of this corpus.
+
+
+## Data 
+
+For this project, I will be using NAVER's Sentiment Movie Corpus (NSMC), and this corpus is public domain. (Naver is one of the biggest search engine in Korea) This data contains three information: id, document, and label. The main review is written in Korean in document column, and label has binary value: 0 means it's a negative review, and 1 means it is a positive review.
+
+
+## Analysis
+
+As I stated above, my goal is to build a model that predicts whether a review is positive or negative. Since
+the corpus is not refined at all, I am not sure what kind of hypothesis I can make at this point. (or actually, can I make a hypothesis when I make a prediction model?) 
+
+
+
+
+
+
