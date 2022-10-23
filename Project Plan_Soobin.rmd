@@ -7,10 +7,8 @@ output:
     toc: TRUE
 ---
 
-This is your project plan. Start with your project ideas document, add more concrete details, and polish it up. Your plan should also account for the time it’ll take to find the right R package(s) for what you want to do.
 
-
-# 1. Comparing English speakers' Korean learning development with Korean speakers' English learning development.
+# Comparing English speakers' Korean learning development with Korean speakers' English learning development.
 
 
 ## Brief summary
@@ -20,19 +18,24 @@ I would like to compare the process of the development of L2 learners with diffe
 
 ## Data 
 
-For this project, I am considering using two datasets, which are PELIC, and a data set from an article about Korean L2 writing. Below is the article's title and its authors:
+For this project, I will use two datasets, which are PELIC, and a data set from an article about Korean L2 writing. Below is the article's title and its authors:
 
 Lim, K., Song, J., & Park, J. (2022). Neural automated writing evaluation for Korean L2 writing. Natural Language Engineering, _Cambridge University Press, 1-23._ https://doi.org/10.1017/S1351324922000298. Lim, K. and Song, J. contributed equally.
 
-Both data sets are available for public use.
+Since both corpora contains student identifier code, their level of target language, and the tokens of their essay, so they perfectly fit into the purpose of this project.
 
 
-## Analysis
+## Hypothesis
 
-Since Korean is a synthetic language and has a rich vocabulary pool of honorifics which are reflected to most of the ending morphemes, there are numerous morphemes that can be considered conjunctive particles. Therefore, I assume that at the relatively lower level of L2 speakers, English learners have a higher degree of syntactic complexity. However, for the upper level of L2 speakers, Korean learners shows higher level of syntactic complexity. In terms of lexical diversity, I assume no difference between two groups.
+Since Korean is a synthetic language and has a rich vocabulary pool of honorifics which are reflected to morphosyntactic markings of verbs, there are numerous morphemes that can be considered conjunctive particles. Therefore, I assume that at the relatively lower level of L2 speakers, English learners have a higher degree of syntactic complexity. However, for the upper level of L2 speakers, Korean learners shows higher level of syntactic complexity. In terms of lexical diversity, I assume no difference between two groups.
+
+
+## R packages needed for analysis
+
+Fortunately, the data I will be using for this project are already organized and accessible to manipulate. In addition, they are all either .csv or .tsv file, whch can be easily readable in RStudio. Therefore, I believe (and hope) that `dyplr` and `tidyverse` would be more than enough.
 
 
 ## Presentation
 
-
+I am not sure at this moment which way would be the most efficient to demonstrate what I will find, but I believe I will be comparing each levels of each target language and their lexical diversity and syntactic complexity, making graphs and plots with `tidyverse`.
 
