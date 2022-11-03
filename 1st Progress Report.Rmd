@@ -1,0 +1,19 @@
+---
+title: "1st Progress Report"
+author: "Soobin Choi"
+date: "3 November 2022"
+output: 
+  github_document: 
+    toc: TRUE
+---
+
+
+## Progress in general
+
+  I was able to import both korean-learner-corpus (KLC) and PELIC data from github and finish sorting out what I need for my project as in the file 'interim check'.
+
+  Also, I tokenized the korean-learner-corpus text, but the problem that I face here is, I am not really sure how I can count the tokens in one text. I am thinking about using count() and then sum the number of tokens with the same user id, but I haven't tried yet. Maybe I will get a lot of errors or unwanted result. 
+
+  Luckily, for PELIC, the text is already tokenized and even the number of tokens of each text is in the data. So, it will definitely facilitate my project. The problem I faced when mutating the PELIC data is that the information I need is quite scattered in different data sets. So I had to import almost all of the data set and mutate then using join() function.
+  
+  After I figure out how to count the tokens in KLC, I believe (and hope) there would not be many issues.
