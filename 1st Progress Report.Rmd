@@ -12,7 +12,7 @@ output:
 
   I was able to import both korean-learner-corpus (KLC) and PELIC data from github and finish sorting out what I need for my project as in the file 'interim check'.
 
-  Also, I tokenized the korean-learner-corpus text, but the problem that I face here is, I am not really sure how I can count the tokens in one text. I am thinking about using count() and then sum the number of tokens with the same user id, but I haven't tried yet. Maybe I will get a lot of errors or unwanted result. 
+  Also, I tokenized the korean-learner-corpus text, but the problem that I face here is, I am not really sure how I can count the tokens in one text. I am thinking about using count() and then sum the number of tokens with the same user id, but I haven't tried yet. Maybe I will get a lot of errors or unwanted result. Also, I am not sure how I can count the morphemes in KLC. I believe I can just count the number of slashes(/) in the corpus since they marked morpheme boundaries with slash, but I haven't figured this out yet.
 
   Luckily, for PELIC, the text is already tokenized and even the number of tokens of each text is in the data. So, it will definitely facilitate my project. The problem I faced when mutating the PELIC data is that the information I need is quite scattered in different data sets. So I had to import almost all of the data set and mutate then using join() function.
   
