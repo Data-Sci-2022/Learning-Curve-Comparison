@@ -1,3 +1,13 @@
+---
+title: "Project Plan_Soobin"
+author: "Soobin Choi"
+date: "2022-10-01"
+output: 
+  github_document: 
+    toc: TRUE
+---
+
+
 
 ```{r setup, message=FALSE}
 knitr::opts_chunk$set(echo=TRUE, include=TRUE, comment="")
@@ -99,8 +109,6 @@ PELIC_clean
 
 ```
 
-
-python이랑 넘 헷갈리는걸?ㅜ
 
 
 
