@@ -7,6 +7,7 @@ output:
     toc: TRUE
 ---
 
+# Progress Report
 
 ## Progress in general
 
@@ -17,3 +18,27 @@ output:
   Luckily, for PELIC, the text is already tokenized and even the number of tokens of each text is in the data. So, it will definitely facilitate my project. The problem I faced when mutating the PELIC data is that the information I need is quite scattered in different data sets. So I had to import almost all of the data set and mutate then using join() function.
   
   After I figure out how to count the tokens in KLC, I believe (and hope) there would not be many issues.
+  
+## sharing plan
+
+  Regarding Korean learner corpus, I am not very sure at this moment because the data owner does not specify the lisence in the repository. Since the repository is in public domain, it might be okay to use the data and share the result, but I think it would be a better approach to reach out to the owner and asks his permission.
+
+
+## Updates 
+
+11-09-2022
+
+### KCL
+
+sorting out the data based on the nationality
+counting tokens using `unnest()`
+
+### PELIC
+
+merging datasets with the necessary columns only
+filtering data based on text length (larger than 10)
+sorting based on the native language (only korean)
+
+
+
+
