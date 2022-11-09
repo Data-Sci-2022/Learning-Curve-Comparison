@@ -60,9 +60,12 @@ KLC_eng %>%
 KLC_eng %>% 
   select(ID,Nationality, Text)
 
-KLC_eng %>% 
+KLC_token <- KLC_eng %>% 
   unnest_tokens(word, Text) %>% 
   count(ID)
+
+KLC_clean %>% 
+  filter(Nationality %in% c("미국", "영국", "호주"))
 ```
 
 When filtering nationality of participants, I was not sure what sort of criterium I should apply. I know a huge part of the population in Thailand speaks English, then should I include them too?
@@ -97,23 +100,25 @@ PELIC_ans1 <- PELIC_ans %>%
   
 PELIC_id1 <- PELIC_id %>% 
   select(anon_id, native_language)
+
 ```
+
+* course_id: a unique identifier for each course - a 1-4 digit integer, e.g. 987
+
+* level_id:	a code to identify in which of the four levels the text was produced (5 the highest)
+
 
 
 ** Joining all the columns in one dataframe
 ```{r}
 PELIC1 <- full_join(PELIC_ans1, PELIC_crs1, by = "course_id")
+PELIC2 <- full_join(PELIC1, PELIC_id1,by = "anon_id")
+PELIC3 <- full_join(PELIC2, PELIC_scr1, by = "anon_id")
 
-PELIC2 <- full_join(PELIC_ans1, PELIC_scr1, PELIC_id1, by = "anon_id")
+PELIC_clean <- PELIC3 %>% 
+  filter(native_language == "Korean", text_len > 10, level_id == 5)  
 
-PELIC1 <- PELIC1 %>%
-  select(anon_id, level_id)
-
-PELIC_clean <- full_join(PELIC1,PELIC2, by = "anon_id")
-
-
-PELIC_clean
-
+head(PELIC_clean)  
 ```
 
 
