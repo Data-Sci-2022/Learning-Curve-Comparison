@@ -35,7 +35,10 @@ KLC_clean <- KLC %>%
   filter(Level %in% c("A1", "A2", "B1", "B2", "C1", "C2"))
 
 KLC_clean %>% 
-  filter(Level == "C2")
+  filter(Level %in% c("C1", "C2")) %>% 
+  filter(Nationality %in% c("미국", "영국", "호주"))
+
+# There are only six 
 ```
 
 
@@ -56,6 +59,10 @@ KLC_eng %>%
 
 KLC_eng %>% 
   select(ID,Nationality, Text)
+
+KLC_eng %>% 
+  unnest_tokens(word, Text) %>% 
+  count(ID)
 ```
 
 When filtering nationality of participants, I was not sure what sort of criterium I should apply. I know a huge part of the population in Thailand speaks English, then should I include them too?
