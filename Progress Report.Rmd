@@ -26,19 +26,29 @@ output:
 
 ## Updates 
 
-11-09-2022
+### Progress report 1 (11-09-2022)
 
-### KCL
+#### KLC
 
 sorting out the data based on the nationality
-counting tokens using `unnest()`
+counting tokens using `unnest_tokes()`
 
-### PELIC
+#### PELIC
 
 merging datasets with the necessary columns only
 filtering data based on text length (larger than 10)
 sorting based on the native language (only korean)
 
+### Progress report 2 (11-14-2022)
 
+#### KLC
 
+tokenize and count the tokens for each essay.
+I'm sort of stuck here because I do not know how to count word type. 
+How can I use unique() or distinct function to the values 
+whose type is list?
+
+#### PELIC
+
+Changing `full_join()` to `left_join()` to make the data smaller
 
