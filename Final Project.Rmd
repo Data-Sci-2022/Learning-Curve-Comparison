@@ -1,5 +1,5 @@
 ---
-title: "Project Plan_Soobin"
+title: "Final Project"
 author: "Soobin Choi"
 date: "2022-10-01"
 output: 
@@ -7,21 +7,31 @@ output:
     toc: TRUE
 ---
 
-
+# Developmental process of L2 - English and Korean
 
 ```{r setup, message=FALSE}
 knitr::opts_chunk$set(echo=TRUE, include=TRUE, comment="")
 library(tidyverse)
-library(dplyr)
 library(tidytext)
-library(tidyr)
+library(repurrrsive)
 ```
+
+
+## Korean Learners' Corpus (KLC)
+
+### Data Import
+
 
 ```{r}
 KLC <- read_tsv(file = "https://github.com/jungyeul/korean-learner-corpus/raw/main/data/kyunghee_v2.tsv", locale(encoding = "UTF-8")) 
 ```
 
+
+### Data Manipulation
+
+
 ```{r}
+# change column names with clearer description
 KLC <- KLC %>% 
   rename(ID = X1,
          Nationality = X2,
@@ -31,26 +41,19 @@ KLC <- KLC %>%
          Morphemes = X6,
          Level = X7,
          Score = X8)
+
+# remove some values with error
 KLC_clean <- KLC %>% 
   filter(Level %in% c("A1", "A2", "B1", "B2", "C1", "C2"))
 
-KLC_clean %>% 
-  filter(Level %in% c("C1", "C2")) %>% 
-  filter(Nationality %in% c("미국", "영국", "호주"))
-
-# There are only six 
 ```
 
 
+
 ```{r}
+# filter the data with nationality.
 KLC_eng <- KLC_clean %>% 
-  filter(Nationality == "미국"
-        | Nationality == "영국" 
-        | Nationality == "호주"
-        | Nationality == "필리핀"
-        | Nationality == "싱가포르"
-        | Nationality == "인도"
-        | Nationality == "르완다")
+  filter(Nationality %in% c("미국", "영국", "호주", "필리핀", "싱가포르", "인도", "르완다"))
 
 KLC_eng %>% 
   select(ID, Nationality, Text) %>% 
@@ -62,9 +65,11 @@ KLC_eng %>%
 
 KLC_token <- KLC_eng %>% 
   unnest_tokens(word, Text) %>% 
-  count(ID)
+  count(ID, name = "token_num")
 
-KLC_clean %>% 
+# 모르겠으면 F1을 눌러보자ㅎㅎ
+
+KLC_inner <- KLC_clean %>% 
   filter(Nationality %in% c("미국", "영국", "호주"))
 ```
 
@@ -73,8 +78,113 @@ When filtering nationality of participants, I was not sure what sort of criteriu
 So, I ended up sorting out the countries whose official language includes English.
 It would have been easier for me to sort out if there is a column about their first language, not their nationality.
 
+### Tokenization
 
-** Importing Data
+```{r}
+KLC_tok <- KLC_eng %>% 
+  select(ID, Nationality, Text) %>% 
+  unnest_tokens(word, Text) %>% 
+  group_by(ID)
+
+KLC_eng %>% 
+  select(ID, Nationality, Text) %>% 
+  unnest_tokens(word, Text) %>% 
+  group_by(ID)
+```
+
+#### 1. Lexical Diversity
+
+how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
+
+```{r}
+KLC_eng$Morphemes %>%
+  map(~ str_split(., " (\\+)?"))
+
+KLC_clean <- KLC_eng %>%
+  select(ID, Morphemes) %>% 
+  map(~ str_split(., " (\\+)?")) %>% 
+  as_data_frame() %>% 
+  rename(num_token = Morphemes) %>% 
+  unnest(ID) %>% 
+  left_join(KLC_eng, .,  by="ID")
+
+nrow(unique(unnest(KLC_clean[1,9])))
+unique(unnest(KLC_clean[2,9]))
+unique(unnest(KLC_clean[3,9]))
+
+KLC_clean %>% 
+  group_by(ID) %>% 
+  select(num_token) %>% 
+  unnest() %>% 
+  unique() 
+
+
+
+
+```
+
+```{r}
+x <- rerun(2, sample(4))
+x
+unlist(x)
+x %>% 
+  as_tibble(.name_repair = "universal")
+x %>% flatten() %>% 
+  as_tibble(.name_repair = "universal")
+x %>% flatten_int()
+
+# You can use flatten in conjunction with map
+x %>% map(1L) %>% flatten_int()
+# But it's more efficient to use the typed map instead.
+x %>% map_int(1L)
+```
+
+
+#### 2. Syntactic Complexity
+
+how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?
+
+```{r}
+KLC_small <- head(KLC_eng, 5)
+KLC_small
+```
+
+
+```{r}
+a <- KLC_eng %>%
+  select(ID, Morphemes) %>% 
+  map(~ str_split(., " (\\+)?")) %>% 
+  as_data_frame() %>% 
+  rename(num_token = Morphemes) %>% 
+  unnest(ID)  
+  count(num_token)
+a
+
+KLC_eng %>%
+  select(ID, Morphemes) %>% 
+  map(~ str_split(., " (\\+)?")) %>% 
+  as_data_frame() %>% 
+  rename(num_token = Morphemes) %>% 
+  unnest(ID)
+  
+count(unique(unnest(a$num_token)))
+
+KLC_eng %>%
+  select(ID, Morphemes) %>% 
+  map(~ str_split(., " (\\+)?")) %>% 
+  as_data_frame() %>% 
+  map()
+
+```
+
+
+
+## PELIC
+
+
+### Data Import
+
+
 ```{r}
 PELIC_ans <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/answer.csv")
 
@@ -85,6 +195,7 @@ PELIC_id <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw
 PELIC_scr <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/test_scores.csv")
 ```
 
+### Data manipulation
 
 ** sorting out columns needed
 ```{r}
@@ -111,20 +222,84 @@ PELIC_id1 <- PELIC_id %>%
 
 ** Joining all the columns in one dataframe
 ```{r}
-PELIC1 <- full_join(PELIC_ans1, PELIC_crs1, by = "course_id")
-PELIC2 <- full_join(PELIC1, PELIC_id1,by = "anon_id")
-PELIC3 <- full_join(PELIC2, PELIC_scr1, by = "anon_id")
+PELIC1 <- left_join(PELIC_ans1, PELIC_crs1, by = "course_id") %>%  
+  relocate(c(level_id), .after = course_id)
+PELIC2 <- left_join(PELIC1, PELIC_id1,by = "anon_id")
+PELIC3 <- left_join(PELIC2, PELIC_scr1, by = "anon_id")
 
 PELIC_clean <- PELIC3 %>% 
-  filter(native_language == "Korean", text_len > 10, level_id == 5)  
+  filter(native_language == "Korean", text_len > 10, level_id == 5) %>% 
+  relocate(c(text, tokens),.after = Writing_Sample)
 
-head(PELIC_clean)  
+head(PELIC_clean)
+
+```
+
+#### 1. Lexical Diversity
+
+how to calculate lexical diversity: how many different words are used in each person's essay?; the number of word type divided by the number of tokens
+
+```{r}
+PELIC_clean %>% 
+  mutate(tokens = tokens %>% 
+           str_remove_all("\\['|'\\]|\\s") %>%
+           str_remove("\\.") %>%
+           str_remove("ANON_NAME_0") %>% 
+           str_split("','")) %>% 
+  unnest(tokens)
+```
+
+
+#### 2. Syntactic Complexity
+
+how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?
+
+```{r}
+
+```
+
+
+*------------------------------------------------------------------------------*
+
+```{r}
+PELIC_ans1 %>% 
+  unnest_tokens(word, text) %>% 
+  show()
+  left_join(PELIC_ans %>% select(), by="")
+
+# 이렇게하면 unnest하느라 없어졌던 열들을 다시 갖다 붙일 수 있음!
+
+# %>% mutate(number = str_extract(colname, "regex"))
+# 특정 열에서 특정 표현만 추출.
 ```
 
 
 
 
+```{r}
+PELIC_ans %>% 
+  mutate(tokens = tokens %>% 
+           str_remove_all("\\['|'\\]|\\s") %>% 
+           str_split("','")) %>% 
+  unnest(tokens)
+```
 
+```{r}
+tibble(col1 = list(c('I', 'I', 'PRP'),
+                   c('met', 'meet', 'VBD'),
+                   c('my', 'my', 'PRP$'))) %>%
+  mutate(Word = map(col1, 1),
+         Lemma = map(col1, 2),
+         POSTag = map(col1, 3)) %>% 
+  unnest(Word:POSTag)
+```
+
+```{r}
+KLC_clean$Morphemes[1] %>% 
+  str_split("\\s(?!\\+)") %>% 
+  flatten_chr() %>%
+  str_split(" \\+")
+```
 
 
 
