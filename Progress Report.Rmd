@@ -41,6 +41,10 @@ sorting based on the native language (only korean)
 
 ### Progress report 2 (11-14-2022)
 
+I am struggling with collecting word types from the tokens. I am not sure how I can use `unique()` or `duplicate()` function on the tokens.
+Because of this, I could not move further.
+Also, in the case of PELIC, I need to make another column that only contains lemma and POS, which I am still figuring out. I need Dan's help here.
+
 #### KLC
 
 tokenize and count the tokens for each essay.
@@ -51,4 +55,6 @@ whose type is list?
 #### PELIC
 
 Changing `full_join()` to `left_join()` to make the data smaller
+
+
 
