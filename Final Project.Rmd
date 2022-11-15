@@ -207,7 +207,7 @@ PELIC_crs1 <- PELIC_crs %>%
   select(course_id, level_id)
 
 PELIC_ans1 <- PELIC_ans %>%
-  select(anon_id, course_id, text_len, text, tokens)
+  select(anon_id, course_id, text_len, text, tokens, tok_lem_POS)
   
 PELIC_id1 <- PELIC_id %>% 
   select(anon_id, native_language)
@@ -237,16 +237,26 @@ head(PELIC_clean)
 
 #### 1. Lexical Diversity
 
-how to calculate lexical diversity: how many different words are used in each person's essay?; the number of word type divided by the number of tokens
+how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
 
 ```{r}
-PELIC_clean %>% 
-  mutate(tokens = tokens %>% 
-           str_remove_all("\\['|'\\]|\\s") %>%
-           str_remove("\\.") %>%
-           str_remove("ANON_NAME_0") %>% 
-           str_split("','")) %>% 
-  unnest(tokens)
+head(PELIC_clean, 10) %>% 
+  select(anon_id, tok_lem_POS) %>% 
+  mutate(tok_lem_POS = tok_lem_POS %>% 
+           str_remove_all("\\[") %>% 
+           str_remove_all("\\]") %>% 
+           str_split("(\\))+,")) %>% # I can't figure out how to split the string in the correct way. I wanna leave ')' in each value.
+  unnest(tok_lem_POS)
+  
+           
+
+
+  mutate(lemma = map(tok_lem_POS,2),
+         POS = map(tok_lem_POS,3)) %>% 
+  unnest(lemma, POS)
+
+
+
 ```
 
 
@@ -255,25 +265,16 @@ PELIC_clean %>%
 how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?
 
 ```{r}
-
+PELIC_clean %>% 
+  select
 ```
 
 
-*------------------------------------------------------------------------------*
-
-```{r}
-PELIC_ans1 %>% 
-  unnest_tokens(word, text) %>% 
-  show()
-  left_join(PELIC_ans %>% select(), by="")
-
-# 이렇게하면 unnest하느라 없어졌던 열들을 다시 갖다 붙일 수 있음!
-
-# %>% mutate(number = str_extract(colname, "regex"))
-# 특정 열에서 특정 표현만 추출.
-```
 
 
+
+
+##### codes needed for my project from Dan (Thanks!!!)
 
 
 ```{r}
@@ -304,6 +305,16 @@ KLC_clean$Morphemes[1] %>%
 
 
 
+```{r}
+PELIC_ans1 %>% 
+  unnest_tokens(word, text) %>% 
+  left_join(PELIC_ans %>% select(), by="")
+
+# 이렇게하면 unnest하느라 없어졌던 열들을 다시 갖다 붙일 수 있음!
+
+# %>% mutate(number = str_extract(colname, "regex"))
+# 특정 열에서 특정 표현만 추출.
+```
 
 
 
