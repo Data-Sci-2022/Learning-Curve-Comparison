@@ -98,7 +98,8 @@ how to calculate lexical diversity: how many different words are used in each pe
 
 ```{r}
 KLC_eng$Morphemes %>%
-  map(~ str_split(., " (\\+)?"))
+  map(~ str_split(., " (\\+)?")) %>% 
+  head(3)
 
 KLC_clean <- KLC_eng %>%
   select(ID, Morphemes) %>% 
@@ -150,7 +151,7 @@ KLC_small
 ```
 
 
-```{r}
+```{r, error=TRUE}
 a <- KLC_eng %>%
   select(ID, Morphemes) %>% 
   map(~ str_split(., " (\\+)?")) %>% 
@@ -239,7 +240,7 @@ head(PELIC_clean)
 
 how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
 
-```{r}
+```{r, error=TRUE}
 head(PELIC_clean, 10) %>% 
   select(anon_id, tok_lem_POS) %>% 
   mutate(tok_lem_POS = tok_lem_POS %>% 
@@ -299,13 +300,14 @@ tibble(col1 = list(c('I', 'I', 'PRP'),
 KLC_clean$Morphemes[1] %>% 
   str_split("\\s(?!\\+)") %>% 
   flatten_chr() %>%
-  str_split(" \\+")
+  str_split(" \\+") %>% 
+  head(3)
 ```
 
 
 
 
-```{r}
+```{r, error=TRUE}
 PELIC_ans1 %>% 
   unnest_tokens(word, text) %>% 
   left_join(PELIC_ans %>% select(), by="")
