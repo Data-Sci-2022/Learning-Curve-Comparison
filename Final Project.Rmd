@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo=TRUE, include=TRUE, comment="")
 library(tidyverse)
 library(tidytext)
 library(repurrrsive)
+library(quanteda)
 ```
 
 
@@ -51,26 +52,11 @@ KLC_clean <- KLC %>%
 
 
 ```{r}
+
 # filter the data with nationality.
 KLC_eng <- KLC_clean %>% 
   filter(Nationality %in% c("미국", "영국", "호주", "필리핀", "싱가포르", "인도", "르완다"))
 
-KLC_eng %>% 
-  select(ID, Nationality, Text) %>% 
-  unnest_tokens(word, Text) %>% 
-  group_by(ID)
-
-KLC_eng %>% 
-  select(ID,Nationality, Text)
-
-KLC_token <- KLC_eng %>% 
-  unnest_tokens(word, Text) %>% 
-  count(ID, name = "token_num")
-
-# 모르겠으면 F1을 눌러보자ㅎㅎ
-
-KLC_inner <- KLC_clean %>% 
-  filter(Nationality %in% c("미국", "영국", "호주"))
 ```
 
 When filtering nationality of participants, I was not sure what sort of criterium I should apply. I know a huge part of the population in Thailand speaks English, then should I include them too?
@@ -83,8 +69,7 @@ It would have been easier for me to sort out if there is a column about their fi
 ```{r}
 KLC_tok <- KLC_eng %>% 
   select(ID, Nationality, Text) %>% 
-  unnest_tokens(word, Text) %>% 
-  group_by(ID)
+  unnest_tokens(word, Text)
 
 KLC_eng %>% 
   select(ID, Nationality, Text) %>% 
@@ -97,9 +82,6 @@ KLC_eng %>%
 how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
 
 ```{r}
-KLC_eng$Morphemes %>%
-  map(~ str_split(., " (\\+)?")) %>% 
-  head(3)
 
 KLC_clean <- KLC_eng %>%
   select(ID, Morphemes) %>% 
@@ -107,38 +89,37 @@ KLC_clean <- KLC_eng %>%
   as_data_frame() %>% 
   rename(num_token = Morphemes) %>% 
   unnest(ID) %>% 
-  left_join(KLC_eng, .,  by="ID")
+  left_join(KLC_eng, .,  by="ID") %>% 
+  relocate(num_token, .after = ID) %>% 
+  select(-c(Gender, Topic))
 
-nrow(unique(unnest(KLC_clean[1,9])))
-unique(unnest(KLC_clean[2,9]))
-unique(unnest(KLC_clean[3,9]))
 
-KLC_clean %>% 
+KLC_numtok <- KLC_clean %>% 
+  unnest(num_token) %>% 
   group_by(ID) %>% 
-  select(num_token) %>% 
-  unnest() %>% 
-  unique() 
+  count(ID, name = "num_token")
+
+KLC_numdist <- KLC_clean %>% 
+  unnest(num_token) %>% 
+  group_by(ID) %>% 
+  summarize(num_dist = n_distinct(num_token))
+
+# n_distinct = unique(length())
 
 
+KLC_lex_div <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
+  mutate(lexical_div = (num_dist / num_token))
+
+KLC_final <- left_join(KLC_clean %>% select(-c(num_token:Morphemes)), KLC_lex_div, by = "ID") %>% 
+  group_by(Level) %>% 
+  summarize(meanLD = mean(lexical_div), mean_toklen = mean(num_token))
+
+
+# 11/19 ggplot 만들기
 
 
 ```
 
-```{r}
-x <- rerun(2, sample(4))
-x
-unlist(x)
-x %>% 
-  as_tibble(.name_repair = "universal")
-x %>% flatten() %>% 
-  as_tibble(.name_repair = "universal")
-x %>% flatten_int()
-
-# You can use flatten in conjunction with map
-x %>% map(1L) %>% flatten_int()
-# But it's more efficient to use the typed map instead.
-x %>% map_int(1L)
-```
 
 
 #### 2. Syntactic Complexity
@@ -152,29 +133,22 @@ KLC_small
 
 
 ```{r, error=TRUE}
-a <- KLC_eng %>%
-  select(ID, Morphemes) %>% 
-  map(~ str_split(., " (\\+)?")) %>% 
-  as_data_frame() %>% 
-  rename(num_token = Morphemes) %>% 
-  unnest(ID)  
-  count(num_token)
-a
+KLC_sent <- KLC_clean %>% 
+  select(ID, Text) %>% 
+  unnest_tokens(Sentence, Text, "sentences") 
 
-KLC_eng %>%
+KLC_sent %>% 
+  unnest_tokens(word, Sentence)
+
+KLC_clean %>% 
   select(ID, Morphemes) %>% 
-  map(~ str_split(., " (\\+)?")) %>% 
+  map(~ str_split(., "/EF")) %>% # Every sentence ends with a morpheme whose POS is EF.
   as_data_frame() %>% 
-  rename(num_token = Morphemes) %>% 
-  unnest(ID)
+  unnest(ID, Morphemes) %>% 
+  show
+  mutate_all(funs(count_morph = count(Morphemes)))
   
-count(unique(unnest(a$num_token)))
 
-KLC_eng %>%
-  select(ID, Morphemes) %>% 
-  map(~ str_split(., " (\\+)?")) %>% 
-  as_data_frame() %>% 
-  map()
 
 ```
 
@@ -241,21 +215,33 @@ head(PELIC_clean)
 how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
 
 ```{r, error=TRUE}
-head(PELIC_clean, 10) %>% 
+lemPOS <- PELIC_clean %>% 
   select(anon_id, tok_lem_POS) %>% 
   mutate(tok_lem_POS = tok_lem_POS %>% 
-           str_remove_all("\\[") %>% 
-           str_remove_all("\\]") %>% 
-           str_split("(\\))+,")) %>% # I can't figure out how to split the string in the correct way. I wanna leave ')' in each value.
-  unnest(tok_lem_POS)
-  
+           str_remove_all("\\[\\(") %>% 
+           str_remove_all("\\)\\]") %>% 
+           str_split("\\),")) %>% 
+  unnest(tok_lem_POS) %>% 
+  separate(tok_lem_POS, into = c('token', 'lemma', 'POS'), sep = ',') %>% 
+  select(-token) %>% 
+  unite(lem_POS, lemma, POS, sep = "/") 
+
+lemPOS
+lemPOS %>% 
+  group_by(anon_id) %>% 
+  summarize(num_morph = n_distinct(lem_POS)) 
+ 
+  left_join(PELIC_clean %>% 
+              select(anon_id, text_len), by = 'anon_id')
            
-
-
+PELIC_clean %>% 
+  select
+  
+'''
   mutate(lemma = map(tok_lem_POS,2),
          POS = map(tok_lem_POS,3)) %>% 
   unnest(lemma, POS)
-
+'''
 
 
 ```
@@ -265,7 +251,7 @@ head(PELIC_clean, 10) %>%
 
 how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?
 
-```{r}
+```{r, error=TRUE}
 PELIC_clean %>% 
   select
 ```
@@ -317,6 +303,18 @@ PELIC_ans1 %>%
 # %>% mutate(number = str_extract(colname, "regex"))
 # 특정 열에서 특정 표현만 추출.
 ```
+
+
+overfitting
+; 모델이 샘플에 너무 딱 맞으면 전체 population에 대한 대표성을 잃는다.
+
+correlation and regression trees (CART) ; 한가지 해결방법
+ensemble method; 다른 해결방법
+random forest?
+ranger package로 가지고 random forest를 쓸 수 잇음.
+
+overlearning
+; 
 
 
 
