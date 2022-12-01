@@ -57,4 +57,18 @@ whose type is list?
 Changing `full_join()` to `left_join()` to make the data smaller
 
 
+### Progress report 3 (12-01-2022)
 
+#### KLC
+
+Almost done with data wrangling - need to sort out the necessary codes.
+data visualization, statistical analysis is needed.
+
+
+
+#### PELIC
+
+only 2nd part is left in terms of data wrangling.
+but R crashes repeatedly due to the huge size of the data.
+but I think I will not have a big problem for my presentation next tuesday.
+hope that I still remember stats I learned last semester..
