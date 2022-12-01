@@ -15,6 +15,8 @@ library(tidyverse)
 library(tidytext)
 library(repurrrsive)
 library(quanteda)
+library(magrittr)
+
 ```
 
 
@@ -83,6 +85,8 @@ how to calculate lexical diversity: how many different words are used in each pe
 
 ```{r}
 
+## making a clean version of the data; 
+
 KLC_clean <- KLC_eng %>%
   select(ID, Morphemes) %>% 
   map(~ str_split(., " (\\+)?")) %>% 
@@ -94,6 +98,8 @@ KLC_clean <- KLC_eng %>%
   select(-c(Gender, Topic))
 
 
+# word type and wort token, TTR
+
 KLC_numtok <- KLC_clean %>% 
   unnest(num_token) %>% 
   group_by(ID) %>% 
@@ -104,18 +110,19 @@ KLC_numdist <- KLC_clean %>%
   group_by(ID) %>% 
   summarize(num_dist = n_distinct(num_token))
 
-# n_distinct = unique(length())
+###### n_distinct = unique(length())
 
 
 KLC_lex_div <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
   mutate(lexical_div = (num_dist / num_token))
 
-KLC_final <- left_join(KLC_clean %>% select(-c(num_token:Morphemes)), KLC_lex_div, by = "ID") %>% 
+min(KLC_lex_div$num_token)
+max(KLC_lex_div$num_token)
+
+KLC_final1 <- left_join(KLC_clean %>% select(-c(num_token:Morphemes)), KLC_lex_div, by = "ID") %>% 
   group_by(Level) %>% 
-  summarize(meanLD = mean(lexical_div), mean_toklen = mean(num_token))
+  summarize(mean_lexicalDiversity = mean(lexical_div), mean_toklen = mean(num_token))
 
-
-# 11/19 ggplot 만들기
 
 
 ```
@@ -124,7 +131,7 @@ KLC_final <- left_join(KLC_clean %>% select(-c(num_token:Morphemes)), KLC_lex_di
 
 #### 2. Syntactic Complexity
 
-how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?
+how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?; TTR // total token length
 
 ```{r}
 KLC_small <- head(KLC_eng, 5)
@@ -134,24 +141,57 @@ KLC_small
 
 ```{r, error=TRUE}
 KLC_sent <- KLC_clean %>% 
-  select(ID, Text) %>% 
   unnest_tokens(Sentence, Text, "sentences") 
 
 KLC_sent %>% 
   unnest_tokens(word, Sentence)
 
-KLC_clean %>% 
-  select(ID, Morphemes) %>% 
-  map(~ str_split(., "/EF")) %>% # Every sentence ends with a morpheme whose POS is EF.
-  as_data_frame() %>% 
-  unnest(ID, Morphemes) %>% 
-  show
-  mutate_all(funs(count_morph = count(Morphemes)))
+
+
+KLC_morph <- KLC_sent %>% 
+  unnest(num_token) %>% 
+  mutate(sent_num = lag(num_token) %>% 
+           str_detect("/EF$") %>% 
+           replace_na(FALSE) %>% 
+           cumsum() %>% 
+           add(1),
+         .after = num_token)
+
+
+KLC_final2 <- KLC_morph %>% 
+  group_by(ID, sent_num) %>% 
+  mutate(dist_morph = n_distinct(num_token),
+            num_morph = n(),
+            TTR = dist_morph/num_morph) %>% 
+  relocate(TTR, .after = sent_num) %>% 
+  group_by(Level) %>% 
+  summarize(mean_TTR = mean(TTR)) %>% 
+  left_join(., KLC_final1, by = "Level")
   
+# count하고나서 num_token을 살리고 싶으면 어떻게해야하지?
+# summarize 대신 mutate!
 
 
+KLC_final1
+KLC_final2
+
+'''
+count: 데이터프레임
+length: 벡터값
+'''
 ```
 
+
+
+
+
+```{r}
+# Lag & lead?
+KLC_clean %>% 
+  head() %>% 
+  mutate(ID_lag = lag(ID),
+         ID_lead = lead(ID))
+```
 
 
 ## PELIC
@@ -168,6 +208,8 @@ PELIC_crs <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/ra
 PELIC_id <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/student_information.csv")
 
 PELIC_scr <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/test_scores.csv")
+
+PELIC_ques <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/question.csv")
 ```
 
 ### Data manipulation
@@ -182,10 +224,13 @@ PELIC_crs1 <- PELIC_crs %>%
   select(course_id, level_id)
 
 PELIC_ans1 <- PELIC_ans %>%
-  select(anon_id, course_id, text_len, text, tokens, tok_lem_POS)
+  select(anon_id, course_id, question_id, text_len, text, tokens, tok_lem_POS)
   
 PELIC_id1 <- PELIC_id %>% 
   select(anon_id, native_language)
+
+PELIC_ques1 <- PELIC_ques %>% 
+  select(question_id, question_type_id)
 
 ```
 
@@ -194,8 +239,17 @@ PELIC_id1 <- PELIC_id %>%
 * level_id:	a code to identify in which of the four levels the text was produced (5 the highest)
 
 
+```{r}
+left_join(PELIC_ans1, PELIC_ques1, by = "question_id") %>% 
+  relocate(question_type_id, .after = question_id) %>% 
+  filter(question_type_id %in% c(1,4))
+```
+
+
+
 
 ** Joining all the columns in one dataframe
+
 ```{r}
 PELIC1 <- left_join(PELIC_ans1, PELIC_crs1, by = "course_id") %>%  
   relocate(c(level_id), .after = course_id)
@@ -203,10 +257,11 @@ PELIC2 <- left_join(PELIC1, PELIC_id1,by = "anon_id")
 PELIC3 <- left_join(PELIC2, PELIC_scr1, by = "anon_id")
 
 PELIC_clean <- PELIC3 %>% 
-  filter(native_language == "Korean", text_len > 10, level_id == 5) %>% 
+  filter(native_language == "Korean", text_len > 43, 475 > text_len) %>% 
   relocate(c(text, tokens),.after = Writing_Sample)
 
 head(PELIC_clean)
+
 
 ```
 
@@ -215,27 +270,61 @@ head(PELIC_clean)
 how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
 
 ```{r, error=TRUE}
+
+# cleaning POS data
+
 lemPOS <- PELIC_clean %>% 
   select(anon_id, tok_lem_POS) %>% 
   mutate(tok_lem_POS = tok_lem_POS %>% 
            str_remove_all("\\[\\(") %>% 
            str_remove_all("\\)\\]") %>% 
+           str_remove_all("\\(") %>% 
+           str_remove_all("'") %>% 
            str_split("\\),")) %>% 
   unnest(tok_lem_POS) %>% 
   separate(tok_lem_POS, into = c('token', 'lemma', 'POS'), sep = ',') %>% 
   select(-token) %>% 
+  filter(!(lemma == ""))
   unite(lem_POS, lemma, POS, sep = "/") 
 
-lemPOS
+# calculate TTR per sent / per text
+  # TTR per sent
+  
+sent_TTR <- lemPOS %>% 
+  left_join(., mean_level, by = "anon_id") %>% 
+  group_by(anon_id) %>% 
+  mutate(sent_num = cumsum(str_detect(lemma, regex("\\."))) %>% add(1)) %>% 
+  ungroup() %>% 
+  group_by(anon_id, sent_num, mean_level) %>% 
+  summarize(dist_morph = n_distinct(lemma),
+            num_morph = n(),
+            sent_TTR = dist_morph/num_morph)
+
+  # TTR per text
+sent_TTR %>% 
+  group_by(anon_id, mean_level) %>% 
+  summarize(mean_TTR = mean(sent_TTR)) %>% 
+  left_join(., mean_texlen, by = "anon_id")
+
+
+####### refined data for joining
+
+mean_level <- PELIC_clean %>% 
+  group_by(anon_id) %>% 
+  summarize(mean_level = mean(level_id))
+
+mean_texlen <- PELIC_clean %>% 
+  group_by(anon_id) %>% 
+  summarize(mean_txtlen = mean(text_len))
+
+'''
 lemPOS %>% 
   group_by(anon_id) %>% 
   summarize(num_morph = n_distinct(lem_POS)) 
- 
   left_join(PELIC_clean %>% 
               select(anon_id, text_len), by = 'anon_id')
-           
-PELIC_clean %>% 
-  select
+'''
+  
   
 '''
   mutate(lemma = map(tok_lem_POS,2),
@@ -243,6 +332,7 @@ PELIC_clean %>%
   unnest(lemma, POS)
 '''
 
+## need to calculate mean sentence length
 
 ```
 
