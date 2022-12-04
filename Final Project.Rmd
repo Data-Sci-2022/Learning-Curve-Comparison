@@ -81,7 +81,7 @@ KLC_eng %>%
 
 #### 1. Lexical Diversity
 
-how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
+how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_ / TTR
 
 ```{r}
 
@@ -113,16 +113,17 @@ KLC_numdist <- KLC_clean %>%
 ###### n_distinct = unique(length())
 
 
-KLC_lex_div <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
-  mutate(lexical_div = (num_dist / num_token))
+KLC_a <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
+  mutate(TTR = (num_dist / num_token))
 
 min(KLC_lex_div$num_token)
 max(KLC_lex_div$num_token)
 
-KLC_final1 <- left_join(KLC_clean %>% select(-c(num_token:Morphemes)), KLC_lex_div, by = "ID") %>% 
-  group_by(Level) %>% 
-  summarize(mean_lexicalDiversity = mean(lexical_div), mean_toklen = mean(num_token))
+###### essay별 TTR
 
+KLC_TTR <- left_join(KLC_a, KLC_clean %>% select(ID, Level), KLC_a, by = "ID") %>% 
+  group_by(Level) %>% 
+  summarize(TTR = mean(TTR), mean_text_len = mean(num_token))
 
 
 ```
@@ -131,20 +132,14 @@ KLC_final1 <- left_join(KLC_clean %>% select(-c(num_token:Morphemes)), KLC_lex_d
 
 #### 2. Syntactic Complexity
 
-how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?; TTR // total token length
-
-```{r}
-KLC_small <- head(KLC_eng, 5)
-KLC_small
-```
+how to calculate syntactic complexity: compare average sentence length  
 
 
 ```{r, error=TRUE}
+
 KLC_sent <- KLC_clean %>% 
   unnest_tokens(Sentence, Text, "sentences") 
 
-KLC_sent %>% 
-  unnest_tokens(word, Sentence)
 
 
 
@@ -156,24 +151,22 @@ KLC_morph <- KLC_sent %>%
            cumsum() %>% 
            add(1),
          .after = num_token)
+##### sentence length
 
-
-KLC_final2 <- KLC_morph %>% 
-  group_by(ID, sent_num) %>% 
-  mutate(dist_morph = n_distinct(num_token),
-            num_morph = n(),
-            TTR = dist_morph/num_morph) %>% 
-  relocate(TTR, .after = sent_num) %>% 
+KLC_syncom <- KLC_morph %>% 
+  select(-Nationality, -Morphemes, -Score, -Sentence) %>% 
+  group_by(sent_num) %>% 
+  mutate(sent_len = length(ID)) %>% 
   group_by(Level) %>% 
-  summarize(mean_TTR = mean(TTR)) %>% 
-  left_join(., KLC_final1, by = "Level")
+  summarize(mean_sent_len = mean(sent_len))
+
+##### above is what I need
+
   
 # count하고나서 num_token을 살리고 싶으면 어떻게해야하지?
 # summarize 대신 mutate!
 
 
-KLC_final1
-KLC_final2
 
 '''
 count: 데이터프레임
@@ -182,6 +175,12 @@ length: 벡터값
 ```
 
 
+## KLC final
+
+```{r}
+KLC_TTR
+KLC_syncom
+```
 
 
 
@@ -231,7 +230,6 @@ PELIC_id1 <- PELIC_id %>%
 
 PELIC_ques1 <- PELIC_ques %>% 
   select(question_id, question_type_id)
-
 ```
 
 * course_id: a unique identifier for each course - a 1-4 digit integer, e.g. 987
@@ -242,7 +240,8 @@ PELIC_ques1 <- PELIC_ques %>%
 ```{r}
 left_join(PELIC_ans1, PELIC_ques1, by = "question_id") %>% 
   relocate(question_type_id, .after = question_id) %>% 
-  filter(question_type_id %in% c(1,4))
+  filter(question_type_id %in% c(4))
+
 ```
 
 
@@ -260,7 +259,10 @@ PELIC_clean <- PELIC3 %>%
   filter(native_language == "Korean", text_len > 43, 475 > text_len) %>% 
   relocate(c(text, tokens),.after = Writing_Sample)
 
-head(PELIC_clean)
+PELIC_clean <- PELIC_clean %>% 
+  mutate(rownum = c(1:3549)) %>% 
+  relocate(rownum, .after = anon_id)
+
 
 
 ```
@@ -274,7 +276,6 @@ how to calculate lexical diversity: how many different words are used in each pe
 # cleaning POS data
 
 lemPOS <- PELIC_clean %>% 
-  select(anon_id, tok_lem_POS) %>% 
   mutate(tok_lem_POS = tok_lem_POS %>% 
            str_remove_all("\\[\\(") %>% 
            str_remove_all("\\)\\]") %>% 
@@ -284,10 +285,43 @@ lemPOS <- PELIC_clean %>%
   unnest(tok_lem_POS) %>% 
   separate(tok_lem_POS, into = c('token', 'lemma', 'POS'), sep = ',') %>% 
   select(-token) %>% 
-  filter(!(lemma == ""))
-  unite(lem_POS, lemma, POS, sep = "/") 
+  filter(!(lemma == "")) %>% 
+  unite(lemPOS, lemma, POS, sep = ",")
+
+
+mean_level <- PELIC_clean %>% 
+  group_by(anon_id) %>% 
+  summarize(mean_lev = round(mean(level_id)))
+
+unique(PELIC_clean$level_id)
+
+### FINAL!!!
+
+PELIC_TTR <- left_join(lemPOS1, mean_level, by = "anon_id") %>% 
+  select(-c(course_id:question_id), -c(native_language:tokens)) %>% 
+  group_by(rownum) %>% 
+  summarize(lemPOS_type = length(unique(lemPOS)),
+            lemPOS_token = length(lemPOS)) %>% 
+  left_join(., PELIC_clean %>% select(anon_id, rownum, level_id), by = "rownum") %>% 
+  group_by(level_id) %>% 
+  summarize(TTR = mean(lemPOS_type/lemPOS_token),
+            mean_text_len = mean(lemPOS_token))
+
+unique(PELIC_clean$level_id)
+
+```
+
+
+
+```{r}
+### This is not needed for my final; just save for my future research
+
+PELIC_clean %>% 
+  unnest_tokens(sentence, text, token = "sentences") %>% 
+  filter(anon_id == "ad1")
 
 # calculate TTR per sent / per text
+
   # TTR per sent
   
 sent_TTR <- lemPOS %>% 
@@ -300,53 +334,154 @@ sent_TTR <- lemPOS %>%
             num_morph = n(),
             sent_TTR = dist_morph/num_morph)
 
-  # TTR per text
-sent_TTR %>% 
-  group_by(anon_id, mean_level) %>% 
-  summarize(mean_TTR = mean(sent_TTR)) %>% 
-  left_join(., mean_texlen, by = "anon_id")
-
-
-####### refined data for joining
-
-mean_level <- PELIC_clean %>% 
-  group_by(anon_id) %>% 
-  summarize(mean_level = mean(level_id))
-
-mean_texlen <- PELIC_clean %>% 
-  group_by(anon_id) %>% 
-  summarize(mean_txtlen = mean(text_len))
-
-'''
-lemPOS %>% 
-  group_by(anon_id) %>% 
-  summarize(num_morph = n_distinct(lem_POS)) 
-  left_join(PELIC_clean %>% 
-              select(anon_id, text_len), by = 'anon_id')
-'''
-  
-  
-'''
-  mutate(lemma = map(tok_lem_POS,2),
-         POS = map(tok_lem_POS,3)) %>% 
-  unnest(lemma, POS)
-'''
-
-## need to calculate mean sentence length
 
 ```
 
 
 #### 2. Syntactic Complexity
 
-how to calculate syntactic complexity: how many words are used in one sentence and what are the mean of each essay?
+how to calculate syntactic complexity: Long, complex sentences vs. short. simple sentences
 
 ```{r, error=TRUE}
-PELIC_clean %>% 
-  select
+
+lemPOS1 <- PELIC_clean %>% 
+  mutate(tok_lem_POS = tok_lem_POS %>% 
+           str_remove_all("\\[\\(") %>% 
+           str_remove_all("\\)\\]") %>% 
+           str_remove_all("\\(") %>% 
+           str_remove_all("'") %>% 
+           str_split("\\),")) %>% 
+  unnest(tok_lem_POS) %>% 
+  separate(tok_lem_POS, into = c('token', 'lemma', 'POS'), sep = ',') %>% 
+  select(-token) %>% 
+  filter(!(lemma == ""))
+
+PELIC_syncom <- lemPOS1 %>% 
+  group_by(anon_id) %>% 
+  mutate(sent_num = cumsum(str_detect(lemma, regex("\\."))) %>% add(1)) %>% 
+  ungroup() %>% 
+  select(-c(rownum:course_id), -question_id, -c(native_language:tokens)) %>% 
+  unite(lemPOS, lemma, POS, sep = ",") %>% 
+  group_by(anon_id, sent_num) %>% 
+  mutate(sent_len = length(anon_id),
+         mean_texlen = mean(text_len)) %>% 
+  group_by(level_id) %>% 
+  summarize(mean_sent_len = mean(sent_len))
+
+unique(lemPOS1$level_id)
 ```
 
 
+## sum-up
+
+```{r}
+PELIC_TTR
+PELIC_syncom
+```
+
+
+
+# comparison between KLC and PELIC
+
+```{r}
+KLC_TTR
+PELIC_TTR
+
+KLC_syncom
+PELIC_syncom
+```
+
+### Data Visualization
+
+```{r}
+KLC_TTR_vis <- KLC_TTR %>% 
+  mutate_all(funs(str_replace_all(., c("A1" = "1",
+                                     "A2" = "2",
+                                     "B1" = "3",
+                                     "B2" = "4",
+                                     "C1" = "5",
+                                     "C2" = "6")))) %>% 
+  mutate(TTR = as.numeric(TTR)) %>% 
+  mutate(mean_text_len = as.numeric(mean_text_len)) %>% 
+  mutate(TTR = round(TTR, 4),
+         mean_text_len = round(mean_text_len))
+
+KLC_syncom_vis <- KLC_syncom %>% 
+    mutate_all(funs(str_replace_all(., c("A1" = "1",
+                                     "A2" = "2",
+                                     "B1" = "3",
+                                     "B2" = "4",
+                                     "C1" = "5",
+                                     "C2" = "6")))) %>% 
+  mutate(mean_sent_len = as.numeric(mean_sent_len)) %>% 
+  mutate(mean_sent_len = round(mean_sent_len))
+
+```
+
+```{r}
+
+
+## KLC_TTR
+left_join(KLC_a, KLC_clean %>% select(ID, Level), KLC_a, by = "ID") %>% 
+  ggplot(aes(x = num_token, y = TTR, col = Level)) + 
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, col = "yellow") 
+
+## KLC_syncom
+
+KLC_morph %>% 
+  select(-Nationality, -Morphemes, -Score, -Sentence) %>% 
+  group_by(sent_num) %>% 
+  mutate(sent_len = length(ID)) %>% 
+  ggplot(aes(x = Level, y = sent_len, fill = Level)) + 
+  geom_boxplot() 
+
+
+## PELIC TTR
+
+
+left_join(lemPOS1, mean_level, by = "anon_id") %>% 
+  select(-c(course_id:question_id), -c(native_language:tokens)) %>% 
+  group_by(rownum) %>% 
+  summarize(lemPOS_type = length(unique(lemPOS)),
+            lemPOS_token = length(lemPOS)) %>% 
+  left_join(., PELIC_clean %>% select(anon_id, rownum, level_id), by = "rownum") %>% 
+  ggplot(aes(x = num_token, y = TTR, col = Level)) + 
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, col = "yellow") 
+
+
+## PELIC syncom
+
+lemPOS1 %>% 
+  group_by(anon_id) %>% 
+  mutate(sent_num = cumsum(str_detect(lemma, regex("\\."))) %>% add(1)) %>% 
+  ungroup() %>% 
+  select(-c(rownum:course_id), -question_id, -c(native_language:tokens)) %>% 
+  unite(lemPOS, lemma, POS, sep = ",") %>% 
+  group_by(anon_id, sent_num) %>% 
+  mutate(sent_len = length(anon_id),
+         mean_texlen = mean(text_len)) %>% 
+  mutate(level_id = as.character(level_id)) %>% 
+  ggplot(aes(x = level_id, y = sent_len, fill = level_id)) + 
+  geom_boxplot() + 
+  scale_y_continuous(limits = c(0,200))
+
+
+
+```
+
+
+
+
+```{r}
+KLC_TTR_vis %>% 
+  ggplot(aes(x = Level, y = TTR)) +
+  geom_point() +
+  geom_path() +
+  geom_line() + 
+  geom_smooth(method = "lm", formula = y ~ x)
+```
 
 
 
