@@ -1,0 +1,50 @@
+---
+title: "Final Project"
+author: "Soobin Choi"
+date: "2022-12-04"
+output: 
+  github_document: 
+    toc: TRUE
+---
+
+# Developmental process of L2 - English and Korean
+
+## Background information and Research Qeustions
+
+According to Foreign Service Institute (FIS), Korean belongs to the languages exceptionally difficult for those whose first language is English.
+
+
+```{r}
+knitr::include_graphics("Hardest_Languages_02-1.jpg")
+```
+Why is it difficult?
+
+ - Different sentence structure
+ - classifiers / case markers
+ - verb conjugation (!)
+
+```{r}
+knitr::include_graphics("korean_verb.jpg")
+
+```
+
+ *- different language type in terms of morphosyntax*
+   English: Analytic (by using specific grammatical words) (Britannica, 2011)
+   Korean: Synthetic (by inflecting words or adding morphemes) (Britannica, 2011)
+   
+   
+**My Research question: **
+
+Is there any difference in terms of *lexical diversity* and *syntactic complexity* if learners of each language have the same level of L2?
+
+
+ you should start with _motivating_ and _contextualizing_ your project topic. That means supplying background information, research questions, theoretical foundations and related literature, and so on.
+
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo=TRUE, include=TRUE, comment="")
+library(tidyverse)
+library(tidytext)
+library(repurrrsive)
+library(quanteda)
+library(magrittr)
+```
