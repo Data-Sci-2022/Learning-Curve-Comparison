@@ -61,8 +61,8 @@ knitr::include_graphics("korean_verb.jpg")
   -\> There might be a difference in the developmental process in each
   language learners caused by this feature.
 
-**One N.B.: different approach in tokenization is needed in the case of
-Korean**
+  **One N.B.: different approach in tokenization is needed in the case
+  of Korean**
 
 ### My Research question
 
@@ -173,6 +173,9 @@ And the mean text length also *increased by almost 40%.*
 
 -\> KLC: Between level A2 and B1 // PELIC: Between level 3 and 4.
 
+    **KLC** shows greater improvement in earlier stage of learning.
+
+
     **Is there any difference in terms of *lexical diversity* in the same level of different L2 speakers?**
 
 - Level B1, Level 3
@@ -209,10 +212,47 @@ knitr::include_graphics("PELIC_SC.jpg")
 
 #### KLC
 
-1.  
+1.  Increased steadily across all level
+
+2.  Biggest improvement: from B1 to B2
+
+3.  There was no unexpected change - A2 the lowest, C1, the highest.
 
 #### PELIC
 
-#### Difference
+1.  Steady increase, just like KLC
+
+2.  Biggest improvement: from level 2 to level 3.
+
+3.  From level 3 to 5, no big difference, which is a surprise.
+
+#### Comparison
+
+1.  Level B1 vs. Level 3: PELIC has higher mean sentence length. But,
+    Level B2 vs. Level 4: KLC is A LOT higher.
+
+2.  Answering to my research question..
+
+    **Between which levels does the language proficiency increase the
+    most?**
+
+-\> KLC: Between level B1 and B2 // PELIC: Between level 2 and 3.
+
+**PELIC** shows greater improvement in earlier stage of learning.
+
+    **Is there any difference in terms of *syntactic complexity* in the same level of different L2 speakers?**
+
+In Level B1 and Level 3, PELIC has higher mean sentence length, but in
+Level B2 and Level 4, KLC outdistance PELIC! And this aspect persists in
+Level C1 and Level 5, too.
 
 ## Limitations
+
+- Discrepancy in sample size.
+
+- Longer sentence, better written? NO!
+
+What do we need more?
+
+-\> **Vocabulary level**; Common, everyday words vs. sophisticated &
+technical words
