@@ -103,42 +103,36 @@ KLC_clean %>%
 
 KLC_numtok <- KLC_clean %>% 
   unnest(num_token) %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
   group_by(ID) %>% 
-  count(ID, name = "num_token")
+  count(Level, name = "num_token")
 
 KLC_numdist <- KLC_clean %>% 
   unnest(num_token) %>% 
-  group_by(ID) %>% 
-  summarize(num_dist = n_distinct(num_token))
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  group_by(ID)
+
 
 ###### n_distinct = unique(length())
 
 
-KLC_a <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
-  mutate(TTR = (num_dist / num_token))
+KLC_TTR <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
+   mutate(TTR = round((num_dist / num_token),4)) %>% 
+   rename(mean_text_len = num_token) %>% 
+   select(-ID) %>% 
+   group_by(Level) %>% 
+   summarize(mean_text_len = mean(mean_text_len),
+             TTR = round(mean(TTR), 4))
 
 
-###### essay별 TTR
 
-KLC_TTR <- 
-  left_join(KLC_a, KLC_clean %>% select(ID, Level), KLC_a, by = "ID") %>% 
-  group_by(Level) %>% 
-  summarize(TTR = mean(TTR), mean_text_len = mean(num_token))
   
-KLC_TTR2 <- 
-  left_join(KLC_a, KLC_clean %>% select(ID, Level), KLC_a, by = "ID") %>% 
+  
+KLC_clean %>% 
   mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
   mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
-  mutate(TTR = as.numeric(TTR),
-         num_token = as.numeric(num_token)) %>% 
-  group_by(Level) %>% 
-  summarize(TTR = mean(TTR), mean_text_len = mean(num_token))
-
-level_count <- left_join(KLC_a, KLC_clean %>% select(ID, Level), KLC_a, by = "ID") %>% 
-  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
-  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
-  mutate(TTR = as.numeric(TTR),
-         num_token = as.numeric(num_token)) %>% 
   group_by(Level) %>% 
   summarize(count = length(Level))
 ```
@@ -331,18 +325,20 @@ unique(PELIC_clean$level_id)
 
 ### FINAL!!!
 
-PELIC_TTR <- left_join(lemPOS1, mean_level, by = "anon_id") %>% 
-  select(-c(course_id:question_id), -c(native_language:tokens)) %>% 
+PELIC_TTR <- lemPOS1 %>% 
+  select(-c(course_id, question_id), -c(native_language:tokens)) %>%
   group_by(rownum) %>% 
   unite(lemPOS, lemma, POS, sep = ",") %>% 
+  group_by(rownum, level_id) %>% 
   summarize(lemPOS_type = length(unique(lemPOS)),
             lemPOS_token = length(lemPOS)) %>%
-  left_join(., PELIC_clean %>% select(anon_id, rownum, level_id), by = "rownum") %>% 
   group_by(level_id) %>% 
-  summarize(TTR = mean(lemPOS_type/lemPOS_token),
-            mean_text_len = mean(lemPOS_token))
+  summarize(mean_text_len = mean(lemPOS_token),
+    TTR = round(mean(lemPOS_type/lemPOS_token), 4))
 
+n_distinct(lemPOS1$anon_id)
 ```
+
 
 
 
@@ -403,29 +399,15 @@ PELIC_syncom
 
 
 
-# Comparison between KLC and PELIC
+## Comparison between KLC and PELIC
 
 ```{r, cache = TRUE}
-KLC_TTR2
+KLC_TTR
 PELIC_TTR
 
 KLC_syncom2
 PELIC_syncom
 ```
-
-
-```{r}
-KLC_TTR2 %>% 
-  ggplot(aes(x = Level, y = TTR * 1000, group = 1)) + 
-  geom_point(color = "salmon") +
-  geom_line(color = "salmon") +
-  geom_bar(aes(y = mean_text_len), fill = "dark green", stat = 'identity') +
-  scale_y_continuous(name = "mean_text_len", sec.axis = sec_axis(~. *0.001, name = "TTR"))
-```
-
-
-
-
 
 
 
@@ -517,26 +499,42 @@ K_plot2
 P_plot2
 ```
 
+
 ```{r}
-KLC_TTR2 %>% 
+KLC_TTR %>% 
   ggplot(aes(x = Level, y = TTR * 1000, group = 1)) + 
   geom_point(color = "salmon") +
   geom_line(color = "salmon") +
   geom_bar(aes(y = mean_text_len), fill = "dark green", stat = 'identity') +
-  scale_y_continuous(name = "mean length", sec.axis = sec_axis(~. *0.001, name = "Mean TTR")) + 
+  scale_y_continuous(name = "mean_text_len", sec.axis = sec_axis(~. *0.001, name = "TTR")) +
   labs(title = "Korean Learner Corpus TTR & Mean Length of Essay")
 ```
 
 ```{r}
 PELIC_TTR %>% 
-  ggplot(aes(x = level_id, y = TTR * 1000, group = 1)) + 
+  ggplot(aes(x = level_id, y = TTR*500, group = 1)) + 
   geom_point(color = "salmon") +
   geom_line(color = "salmon") +
   geom_bar(aes(y = mean_text_len), fill = "dark green", stat = 'identity') +
-  scale_y_continuous(name = "mean length", sec.axis = sec_axis(~. *0.001, name = "Mean TTR")) +
+  scale_y_continuous(name = "mean_text_len", sec.axis = sec_axis(~. *0.002, name = "TTR")) +
   labs(title = "PELIC TTR & Mean Length of Essay")
 ```
+```{r}
+KLC_syncom2 %>% 
+  ggplot(aes(x = Level, y = mean_sent_len, group = 1)) + 
+  geom_point(color = "red") + 
+  geom_path(color = "red") + 
+  scale_y_continuous(limits = c(5,33))
 
+```
+
+```{r}
+PELIC_syncom %>% 
+  ggplot(aes(x = level_id, y = mean_sent_len, group = 1)) + 
+  geom_point(color = "red") + 
+  geom_path(color = "red") + 
+  scale_y_continuous(limits = c(5,33))
+```
 
 
 
