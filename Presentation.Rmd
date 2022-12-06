@@ -36,7 +36,6 @@ knitr::include_graphics("korean_verb.jpg")
    
    -> There might be a difference in the developmental process in each language learners caused by this feature.
    
-      ''' In the case of English, we can tokenize the corpus mostly by white space because it is usually the case that units divided by a white space is a word. In the case of Korean, we have case markers, which are used attached to the root of nouns. Also, in the case of tense markers, (or modal verb?) while it can be used alone in English (e.g. will, have), they cannot be used alone and always have to be attached to the end of the verb. And both case markers and tense markers are considered 'a word' in Korean. Also, the rule of spacing word is crazy; it is very often that people whose first langauge is Korean mis-space when they write. And imagine the cases of learners; they must mess up more. So, generally in Korean NLP, we use morpheme, not word segment.'''
    
    
 ### My Research question_
