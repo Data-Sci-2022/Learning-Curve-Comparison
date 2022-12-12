@@ -1,0 +1,612 @@
+---
+title: "Final Project"
+author: "Soobin Choi"
+date: "2022-10-01"
+output: 
+  github_document: 
+    toc: TRUE
+---
+
+# Developmental process of L2 - English and Korean
+
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo=TRUE, include=TRUE, comment="")
+library(tidyverse)
+library(tidytext)
+library(repurrrsive)
+library(quanteda)
+library(magrittr)
+library(ggplot2)
+```
+
+
+## Korean Learners' Corpus (KLC)
+
+### Data Import
+
+
+```{r, cache = TRUE}
+KLC <- read_tsv(file = "https://github.com/jungyeul/korean-learner-corpus/raw/main/data/kyunghee_v2.tsv", locale(encoding = "UTF-8")) 
+```
+
+
+### Data Manipulation
+
+
+```{r, cache = TRUE}
+# change column names with clearer description
+KLC <- KLC %>% 
+  rename(ID = X1,
+         Nationality = X2,
+         Gender = X3,
+         Topic = X4,
+         Text = X5,
+         Morphemes = X6,
+         Level = X7,
+         Score = X8)
+
+# remove some values with error
+KLC_clean <- KLC %>% 
+  filter(Level %in% c("A1", "A2", "B1", "B2", "C1", "C2"))
+
+```
+
+
+
+```{r, cache = TRUE}
+
+# filter the data with nationality.
+KLC_eng <- KLC_clean %>% 
+  filter(Nationality %in% c("미국", "영국", "호주", "필리핀", "싱가포르", "인도", "르완다"))
+
+```
+
+When filtering nationality of participants, I was not sure what sort of criterium I should apply. I know a huge part of the population in Thailand speaks English, then should I include them too?
+
+So, I ended up sorting out the countries whose official language includes English.
+It would have been easier for me to sort out if there is a column about their first language, not their nationality.
+
+### Tokenization
+
+```{r, cache = TRUE}
+KLC_tok <- KLC_eng %>% 
+  select(ID, Nationality, Text) %>% 
+  unnest_tokens(word, Text)
+
+KLC_eng %>% 
+  select(ID, Nationality, Text) %>% 
+  unnest_tokens(word, Text) %>% 
+  group_by(ID)
+```
+
+#### 1. Lexical Diversity
+
+how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_ / TTR
+
+```{r, cache = TRUE}
+
+## making a clean version of the data; 
+
+KLC_clean <- KLC_eng %>%
+  select(ID, Morphemes) %>% 
+  map(~ str_split(., " (\\+)?")) %>% 
+  as_data_frame() %>% 
+  rename(num_token = Morphemes) %>% 
+  unnest(ID) %>% 
+  left_join(KLC_eng, .,  by="ID") %>% 
+  relocate(num_token, .after = ID) %>% 
+  select(-c(Gender, Topic))
+
+KLC_clean %>% 
+  filter(Level %in% c("C1", 'C2'))
+# word type and wort token, TTR
+
+KLC_numtok <- KLC_clean %>% 
+  unnest(num_token) %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  group_by(ID) %>% 
+  count(Level, name = "num_token")
+
+KLC_numdist <- KLC_clean %>% 
+  unnest(num_token) %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  group_by(ID) %>% 
+  summarize(num_dist = n_distinct(num_token))
+
+
+###### n_distinct = unique(length())
+
+
+KLC_TTR <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>% 
+   mutate(TTR = round((num_dist / num_token),4)) %>% 
+   rename(mean_text_len = num_token) %>% 
+   select(-ID) %>% 
+   group_by(Level) %>% 
+   summarize(mean_text_len = mean(mean_text_len),
+             TTR = round(mean(TTR), 4))
+  
+KLC_clean %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  group_by(Level) %>% 
+  summarize(count = length(Level))
+```
+
+
+
+#### 2. Syntactic Complexity
+
+how to calculate syntactic complexity: compare average sentence length  
+
+
+```{r, error=TRUE}
+
+KLC_sent <- KLC_clean %>% 
+  unnest_tokens(Sentence, Text, "sentences") 
+
+
+
+
+KLC_morph <- KLC_sent %>% 
+  unnest(num_token) %>% 
+  mutate(sent_num = lag(num_token) %>% 
+           str_detect("/EF$") %>% 
+           replace_na(FALSE) %>% 
+           cumsum() %>% 
+           add(1),
+         .after = num_token)
+##### sentence length
+
+KLC_syncom <- KLC_morph %>% 
+  select(-Nationality, -Morphemes, -Score, -Sentence) %>% 
+  group_by(sent_num) %>% 
+  mutate(sent_len = length(ID)) %>% 
+  group_by(Level) %>% 
+  summarize(mean_sent_len = mean(sent_len))
+
+##### above is what I need
+KLC_syncom2 <- KLC_morph %>% 
+  select(-Nationality, -Morphemes, -Score, -Sentence) %>% 
+  group_by(sent_num) %>% 
+  mutate(sent_len = length(ID)) %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  mutate(sent_len = as.numeric(sent_len)) %>% 
+  group_by(Level) %>% 
+  summarize(mean_sent_len = mean(sent_len))
+  
+# count하고나서 num_token을 살리고 싶으면 어떻게해야하지?
+# summarize 대신 mutate!
+
+
+
+'''
+count: 데이터프레임
+length: 벡터값
+'''
+```
+
+
+### KLC final
+
+```{r, cache = TRUE}
+KLC_TTR
+KLC_syncom
+```
+
+
+
+```{r, cache = TRUE}
+# Lag & lead?
+KLC_clean %>% 
+  head() %>% 
+  mutate(ID_lag = lag(ID),
+         ID_lead = lead(ID))
+```
+
+
+## PELIC
+
+
+### Data Import
+
+
+```{r, cache = TRUE}
+PELIC_ans <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/answer.csv")
+
+PELIC_crs <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/course.csv")
+
+PELIC_id <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/student_information.csv")
+
+PELIC_scr <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/test_scores.csv")
+
+PELIC_ques <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/question.csv")
+```
+
+### Data manipulation
+
+** sorting out columns needed
+```{r, cache = TRUE}
+
+PELIC_scr1 <- PELIC_scr %>% 
+  select(anon_id, MTELP_Conv_Score, Writing_Sample)
+
+PELIC_crs1 <- PELIC_crs %>% 
+  select(course_id, level_id)
+
+PELIC_ans1 <- PELIC_ans %>%
+  select(anon_id, course_id, question_id, text_len, text, tokens, tok_lem_POS)
+  
+PELIC_id1 <- PELIC_id %>% 
+  select(anon_id, native_language)
+
+PELIC_ques1 <- PELIC_ques %>% 
+  select(question_id, question_type_id)
+```
+
+* course_id: a unique identifier for each course - a 1-4 digit integer, e.g. 987
+
+* level_id:	a code to identify in which of the four levels the text was produced (5 the highest)
+
+
+```{r, cache = TRUE}
+left_join(PELIC_ans1, PELIC_ques1, by = "question_id") %>% 
+  relocate(question_type_id, .after = question_id) %>% 
+  filter(question_type_id %in% c(4))
+
+```
+
+
+
+
+** Joining all the columns in one dataframe
+
+```{r, cache = TRUE}
+PELIC1 <- left_join(PELIC_ans1, PELIC_crs1, by = "course_id") %>%  
+  relocate(c(level_id), .after = course_id)
+PELIC2 <- left_join(PELIC1, PELIC_id1,by = "anon_id")
+PELIC3 <- left_join(PELIC2, PELIC_scr1, by = "anon_id")
+
+PELIC_clean <- PELIC3 %>% 
+  filter(native_language == "Korean", text_len > 43, 475 > text_len) %>% 
+  relocate(c(text, tokens),.after = Writing_Sample)
+
+PELIC_clean <- PELIC_clean %>% 
+  mutate(rownum = c(1:3549)) %>% 
+  relocate(rownum, .after = anon_id)
+
+
+
+```
+
+#### 1. Lexical Diversity
+
+how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
+
+```{r, error=TRUE}
+
+# cleaning POS data
+
+lemPOS <- PELIC_clean %>% 
+  mutate(tok_lem_POS = tok_lem_POS %>% 
+           str_remove_all("\\[\\(") %>% 
+           str_remove_all("\\)\\]") %>% 
+           str_remove_all("\\(") %>% 
+           str_remove_all("'") %>% 
+           str_split("\\),")) %>% 
+  unnest(tok_lem_POS) %>% 
+  separate(tok_lem_POS, into = c('token', 'lemma', 'POS'), sep = ',') %>% 
+  select(-token) %>% 
+  filter(!(lemma == "")) %>% 
+  unite(lemPOS, lemma, POS, sep = ",")
+
+lemPOS1 <- PELIC_clean %>% 
+  mutate(tok_lem_POS = tok_lem_POS %>% 
+           str_remove_all("\\[\\(") %>% 
+           str_remove_all("\\)\\]") %>% 
+           str_remove_all("\\(") %>% 
+           str_remove_all("'") %>% 
+           str_split("\\),")) %>% 
+  unnest(tok_lem_POS) %>% 
+  separate(tok_lem_POS, into = c('token', 'lemma', 'POS'), sep = ',') %>% 
+  select(-token) %>% 
+  filter(!(lemma == ""))
+
+mean_level <- PELIC_clean %>% 
+  group_by(anon_id) %>% 
+  summarize(mean_lev = round(mean(level_id)))
+
+unique(PELIC_clean$level_id)
+
+### FINAL!!!
+
+PELIC_TTR <- lemPOS1 %>% 
+  select(-c(course_id, question_id), -c(native_language:tokens)) %>%
+  group_by(rownum) %>% 
+  unite(lemPOS, lemma, POS, sep = ",") %>% 
+  group_by(rownum, level_id) %>% 
+  summarize(lemPOS_type = length(unique(lemPOS)),
+            lemPOS_token = length(lemPOS)) %>%
+  group_by(level_id) %>% 
+  summarize(mean_text_len = mean(lemPOS_token),
+    TTR = round(mean(lemPOS_type/lemPOS_token), 4))
+
+n_distinct(lemPOS1$anon_id)
+```
+
+
+
+
+```{r, cache = TRUE}
+### This is not needed for my final; just save for my future research
+
+PELIC_clean %>% 
+  unnest_tokens(sentence, text, token = "sentences") %>% 
+  filter(anon_id == "ad1")
+
+# calculate TTR per sent / per text
+
+  # TTR per sent
+  
+sent_TTR <- lemPOS %>% 
+  left_join(., mean_level, by = "anon_id") %>% 
+  group_by(anon_id) %>% 
+  mutate(sent_num = cumsum(str_detect(lemma, regex("\\."))) %>% add(1)) %>% 
+  ungroup() %>% 
+  show
+  group_by(anon_id, sent_num, mean_level) %>% 
+  summarize(dist_morph = n_distinct(lemma),
+            num_morph = n(),
+            sent_TTR = dist_morph/num_morph)
+
+
+```
+
+
+#### 2. Syntactic Complexity
+
+how to calculate syntactic complexity: Long, complex sentences vs. short. simple sentences
+
+```{r, error=TRUE}
+
+PELIC_syncom <- lemPOS1 %>% 
+  group_by(anon_id) %>% 
+  mutate(sent_num = cumsum(str_detect(lemma, regex("\\."))) %>% add(1)) %>% 
+  ungroup() %>% 
+  select(-c(rownum:course_id), -question_id, -c(native_language:tokens)) %>% 
+  unite(lemPOS, lemma, POS, sep = ",") %>% 
+  group_by(anon_id, sent_num) %>% 
+  mutate(sent_len = length(anon_id),
+         mean_texlen = mean(text_len)) %>% 
+  group_by(level_id) %>% 
+  summarize(mean_sent_len = mean(sent_len))
+
+unique(lemPOS1$level_id)
+```
+
+
+## PELIC final
+
+```{r, cache = TRUE}
+PELIC_TTR
+PELIC_syncom
+```
+
+
+
+## Comparison between KLC and PELIC
+
+```{r, cache = TRUE}
+KLC_TTR
+PELIC_TTR
+
+KLC_syncom2
+PELIC_syncom
+```
+
+
+
+
+### Data Visualization
+
+
+```{r, cache = TRUE}
+## KLC_TTR
+
+K_plot1 <- left_join(KLC_a, KLC_clean %>% select(ID, Level), KLC_a, by = "ID") %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  mutate(TTR = as.numeric(TTR),
+         num_token = as.numeric(num_token)) %>% 
+  ggplot(aes(x = Level, y = TTR, fill = Level)) + 
+  geom_boxplot() +
+  labs(title = "KLC lexical diversity by L2 level")
+
+##### B2 level; only 7 people
+
+## PELIC TTR
+  
+P_plot1 <- left_join(lemPOS1, mean_level, by = "anon_id") %>% 
+  select(-c(course_id:question_id), -c(native_language:tokens)) %>% 
+  group_by(rownum) %>% 
+  unite(lemPOS, lemma, POS, sep = ",") %>% 
+  summarize(lemPOS_type = length(unique(lemPOS)),
+            lemPOS_token = length(lemPOS)) %>% 
+  left_join(., PELIC_clean %>% select(anon_id, rownum, level_id), by = "rownum") %>% 
+  group_by(rownum) %>% 
+  mutate(TTR = mean(lemPOS_type/lemPOS_token),
+            mean_text_len = mean(lemPOS_token),
+         level_id = as.character(level_id)) %>% 
+  ggplot(aes(x = level_id, y = TTR, fill = level_id)) + 
+  geom_boxplot() + 
+  labs(title = "PELIC lexical diversity by L2 level")
+
+K_plot1
+P_plot1
+```
+
+```{r, cache = TRUE}
+
+## KLC_syncom
+
+K_plot2 <- KLC_morph %>% 
+  select(-Nationality, -Morphemes, -Score, -Sentence) %>% 
+  group_by(sent_num) %>% 
+  mutate(sent_len = length(ID)) %>% 
+  mutate_all(funs(str_replace(., "A1", "A2"))) %>% 
+  mutate_all(funs(str_replace(., "C2", "C1"))) %>% 
+  mutate(sent_len = as.numeric(sent_len)) %>% 
+  ggplot(aes(x = Level, y = sent_len, fill = Level)) + 
+  geom_boxplot() + 
+  labs(title = "KLC syntactic complexity by L2 level")
+
+##### B2 level; only 7 people
+
+
+## PELIC syncom
+
+P_plot2 <- lemPOS1 %>% 
+  group_by(anon_id) %>% 
+  mutate(sent_num = cumsum(str_detect(lemma, regex("\\."))) %>% add(1)) %>% 
+  ungroup() %>% 
+  select(-c(rownum:course_id), -question_id, -c(native_language:tokens)) %>% 
+  unite(lemPOS, lemma, POS, sep = ",") %>% 
+  group_by(anon_id, sent_num) %>% 
+  mutate(sent_len = length(anon_id),
+         level_id = as.character(level_id)) %>% 
+  filter(65 >= sent_len) %>% 
+  show
+  ggplot(aes(x = level_id, y = sent_len, fill = level_id)) + 
+  geom_boxplot() +
+  labs(title = "PELIC syntactic complexity by L2 level")
+
+# median(a$sent_len); to remove the effect of outliers
+
+```
+
+### final plot
+
+```{r}
+K_plot1
+P_plot1
+
+K_plot2
+P_plot2
+```
+
+
+```{r}
+KLC_TTR %>% 
+  ggplot(aes(x = Level, y = TTR * 1000, group = 1)) + 
+  geom_point(color = "salmon") +
+  geom_line(color = "salmon") +
+  geom_bar(aes(y = mean_text_len), fill = "dark green", stat = 'identity') +
+  scale_y_continuous(name = "mean_text_len", sec.axis = sec_axis(~. *0.001, name = "TTR")) +
+  labs(title = "Korean Learner Corpus TTR & Mean Length of Essay")
+```
+
+
+```{r}
+
+##### Dan 이 쓰라고 한 plot
+
+KLC_TTR %>% 
+    ggplot(aes(x = TTR, y = mean_text_len, color = Level)) + 
+  geom_point()
+
+PELIC_TTR %>% 
+  mutate(level_id = as.character(level_id)) %>% 
+      ggplot(aes(x = TTR, y = mean_text_len, color = level_id)) + 
+  geom_point()
+
+```
+
+
+```{r}
+PELIC_TTR %>% 
+  ggplot(aes(x = level_id, y = TTR*500, group = 1)) + 
+  geom_point(color = "salmon") +
+  geom_line(color = "salmon") +
+  geom_bar(aes(y = mean_text_len), fill = "dark green", stat = 'identity') +
+  scale_y_continuous(name = "mean_text_len", sec.axis = sec_axis(~. *0.002, name = "TTR")) +
+  labs(title = "PELIC TTR & Mean Length of Essay")
+```
+```{r}
+KLC_syncom2 %>% 
+  ggplot(aes(x = Level, y = mean_sent_len, group = 1)) + 
+  geom_point(color = "red") + 
+  geom_path(color = "red") + 
+  scale_y_continuous(limits = c(5,33))
+
+```
+
+```{r}
+PELIC_syncom %>% 
+  ggplot(aes(x = level_id, y = mean_sent_len, group = 1)) + 
+  geom_point(color = "red") + 
+  geom_path(color = "red") + 
+  scale_y_continuous(limits = c(5,33))
+```
+
+
+
+##### codes needed for my project from Dan (Thanks!!!)
+
+
+```{r, cache = TRUE}
+PELIC_ans %>% 
+  mutate(tokens = tokens %>% 
+           str_remove_all("\\['|'\\]|\\s") %>% 
+           str_split("','")) %>% 
+  unnest(tokens)
+```
+
+```{r, cache = TRUE}
+tibble(col1 = list(c('I', 'I', 'PRP'),
+                   c('met', 'meet', 'VBD'),
+                   c('my', 'my', 'PRP$'))) %>%
+  mutate(Word = map(col1, 1),
+         Lemma = map(col1, 2),
+         POSTag = map(col1, 3)) %>% 
+  unnest(Word:POSTag)
+```
+
+```{r, cache = TRUE}
+KLC_clean$Morphemes[1] %>% 
+  str_split("\\s(?!\\+)") %>% 
+  flatten_chr() %>%
+  str_split(" \\+") %>% 
+  head(3)
+```
+
+
+
+
+```{r, error=TRUE}
+PELIC_ans1 %>% 
+  unnest_tokens(word, text) %>% 
+  left_join(PELIC_ans %>% select(), by="")
+
+# 이렇게하면 unnest하느라 없어졌던 열들을 다시 갖다 붙일 수 있음!
+
+# %>% mutate(number = str_extract(colname, "regex"))
+# 특정 열에서 특정 표현만 추출.
+```
+
+
+overfitting
+; 모델이 샘플에 너무 딱 맞으면 전체 population에 대한 대표성을 잃는다.
+
+correlation and regression trees (CART) ; 한가지 해결방법
+ensemble method; 다른 해결방법
+random forest?
+ranger package로 가지고 random forest를 쓸 수 잇음.
+
+overlearning
+; 
+
+
+
+
