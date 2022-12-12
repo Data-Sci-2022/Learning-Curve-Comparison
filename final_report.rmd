@@ -1,0 +1,24 @@
+---
+title: "final_report.md"
+author: "Soobin Choi"
+date: "2022-12-12"
+output: 
+  github_document: 
+    toc: TRUE
+---
+
+# Introduction
+
+
+# Data
+
+
+# Analysis
+
+## Intragroup analysis
+
+## Intergroup analysis
+
+
+
+# Conclusion
