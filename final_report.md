@@ -59,7 +59,7 @@ in Korean NLP, words are tokenized by morpheme boundaries.
 1.  Syntactic complexity
 
 ![Korean Learners’ Syntactic Complexity by
-Level](visual_aids/KLC_SC.pdf)
+Level](https://github.com/Data-Sci-2022/Learning-Curve-Comparison/raw/main/visual_aids/KLC_SC.pdf)
 
 ## Intergroup analysis
 
