@@ -14,9 +14,10 @@ Soobin Choi
     - <a href="#pelic" id="toc-pelic">PELIC</a>
   - <a href="#intergroup-analysis" id="toc-intergroup-analysis">Intergroup
     analysis</a>
-- <a href="#overall-history-and-process-of-the-project"
-  id="toc-overall-history-and-process-of-the-project">Overall history and
-  process of the project</a>
+- <a href="#conclusion" id="toc-conclusion">Conclusion</a>
+  - <a href="#overall-history-and-process-of-the-project"
+    id="toc-overall-history-and-process-of-the-project">Overall history and
+    process of the project</a>
 
 # Introduction
 
@@ -78,10 +79,13 @@ Diversity by Level</figcaption>
 For the visualization of lexical diversity of each corpus, a mixed plot
 of bar graph and line graph is used to investigate two factors at the
 same time: type-token ratio (TTR), and the mean length of individual
-essay. The y-axis for TTR is on the right side, and that of mean length
-of individual essay is on the right side. The reason we should look at
-both TTR and mean essay length is that TTR is text-length sensitive; it
-does not proportionally increase along with the length of the text.
+essay. The green bar graph represents the mean length of individual
+essay in each level group, and the endpoints of pink line graph
+indicates the mean TTR of each level. The y-axis for TTR is on the right
+side, and that of mean length of individual essay is on the right side.
+The reason we should look at both TTR and mean essay length is that TTR
+is text-length sensitive; it does not proportionally increase along with
+the length of the text.
 
 As can be seen from the plot, TTR at level 3 peaks sharply, followed by
 an even sharper decline at level 4. Based on the fact that the mean
@@ -103,13 +107,13 @@ text length compared to that of level 2.
 
 2.  Syntactic complexity
 
-<img src="code_compile_files/figure-gfm/unnamed-chunk-12-1.png"
+<img src="code_compile_files/figure-gfm/unnamed-chunk-13-1.png"
 style="width:65.0%"
 alt="Korean Learners Syntactic Complexity by Level" />
 <img src="visual_aids/KLC_SC_num.jpg" style="width:45.0%"
 alt="Numeric Values of Korean Learners Syntactic Complexity by Level" />
 
-In respect of syntactic complexity, the graph shows a steady increase
+In respect of syntactic complexity, the graph manifests a steady growth
 across all levels. There was no unexpected change contrary to the result
 of lexical diversity, and the biggest leap in improvement occurred
 between level 3 and 4.
@@ -136,14 +140,18 @@ does not exhibit lots of fluctuations between the levels. The TTR value
 for level 3 speakers of English is the lowest while the TTR value of
 level 2 speakers is the highest. Comparing the results between the
 lowest level and the highest level, the graph indicates that while the
-TTR values of each group are nearly the same, the mean length of essay
-increases by 1.9 times at level 5. On the graph, it appears that the
-greatest improvement occurs between levels 3 and 4, considering that the
-TTR value nearly remains the same during when the mean essay length
+TTR values of level 5 decreased by .03, the mean length of essay
+increases by 1.9 times at level 5. In light of the fact that the
+decreased amount of TTR is negligible but the increase in mean text
+length is considerable, we can conclude that there is also a stark
+difference in language proficiency between level 2 and level 5 in
+English learner groups. On the graph, it appears that the greatest
+improvement occurs between levels 3 and 4, considering that the TTR
+value nearly remains the same during when the mean essay length
 increases by 20%.
 
 <figure>
-<img src="code_compile_files/figure-gfm/unnamed-chunk-12-2.png"
+<img src="code_compile_files/figure-gfm/unnamed-chunk-13-2.png"
 style="width:65.0%"
 alt="Numeric Figures of PELIC Syntactic Complexity by Level" />
 <figcaption aria-hidden="true">Numeric Figures of PELIC Syntactic
@@ -162,21 +170,20 @@ above does not differ from that of Korean learners. A stable improvement
 across the levels is shown, with the biggest leap occurring between
 level 2 and 3. Interesting point in this data is that there seems to be
 no meaningful improvement in the mean length of essay between level 3 to
-5. This can be emanated from the typological feature of English as an
-analytic language.
+5.
 
 ## Intergroup analysis
 
 Comparing the levels that display comparable sizes of mean essay length
 is also a meaningful approach since the length of an essay is an
-important factor to determine if the TTR value is significant. Level 4
-of KLC and level 3 of PELIC contain almost identical value of TTR and
+important factor to determine if the TTR value is significant. Level 3
+of KLC and level 4 of PELIC contain almost identical value of TTR and
 mean text length, which denotes that they own a similar degree of L2
 proficiency. This means that English learners obtain the comparable
-competence of language at level 3 whereas Korean learners obtain an
-equivalent degree of L2 proficiency at level 4. Hence, we can conclude
-that English learners attain the higher level of proficiency of L2
-earlier than Korean learners in terms of lexical diversity.
+competence of language at level 4 whereas Korean learners obtain an
+equivalent degree of L2 proficiency at level 3. Hence, we can conclude
+that Korean learners attain the higher level of proficiency of L2 at an
+earlier stage than English learners in terms of lexical diversity.
 
 On the other hand, the graph shows the opposite result regarding
 syntactic complexity. The mean length of sentences at level 1 in both
@@ -188,6 +195,34 @@ contrast to lexical diversity. However, the mean length of sentences of
 an advanced learner of Korean is longer than that of an advanced learner
 of English. Therefore, we can conclude that Korean learners acquire a
 higher level of syntactic complexity when they reach the most advanced
-level of L2 compared to English learners.
+level of L2 compared to English learners. This can be emanated from the
+typological feature of English as an analytic language. Since Korean is
+a synthetic language and it possesses an abundant number of morphemes
+whose function is to connect sentences, it is relatively easier to
+elongate sentences in Korean, although elongating sentences excessively
+carries the risk of ruining legibility.
 
-# Overall history and process of the project
+# Conclusion
+
+This project investigates the difference of lexical diversity and
+syntactic complexity among two learners’ group. One group comprises
+Korean learners whose first language is English, and the other group
+consists of English learners whose mother tongue is Korean. Regarding
+lexical diversity, Korean learners show the biggest improvement in L2 at
+an earlier stage than English learners. However, with regards to
+syntactic complexity, English learners demonstrates the biggest leap at
+an earlier stage than Korean learners. Considering that Korean is a
+synthetic language and has a rich pool of morphemes that connects
+sentences, it is inferable that this feature can be the result of the
+different typological feature of Korean and English.
+
+### Overall history and process of the project
+
+Luckily, I was able to find corpus that fit into the purpose of my
+research. Moreover, they were well-organized, so there was no need to
+wrestle with the data. The problems and issues that I encountered during
+my journey was mostly related to the data tokenization. Sometimes I was
+not sure what code I should use, sometimes I know what code should be
+used in a case but not sure *how* to use it, and many many times R
+crashed because of the huge amount of tokenized data. But, with the help
+of the classmates and Dan, the project is successfully done.
