@@ -27,75 +27,60 @@ To evaluate the level of language proficiency and provide a comparison within ea
 1. Lexical Diversity
 
 
-![Korean Learners Lexical Diversity by Level](visual_aids/KLC_TTR.jpg){width=65%}
+![Korean Learners Lexical Diversity by Level](code_compile_files/figure-gfm/unnamed-chunk-11-1.png){width=65%}
 
 
 ![Numeric Values of Korean Learners Lexical Diversity by Level](visual_aids/KLC_TTR_num.jpg){width=50%}
 
-For the visualization of lexical diversity of each corpus, a mixed plot of bar graph and line graph is used to investigate two factors at the same time: type-token ratio (TTR), and the mean length of individual essay. The y-axis for TTR is on the right side, and that of mean length of individual essay is on the right side. The reason we should look at both TTR and mean essay length is that TTR is text-length sensitive; it does not proportionally increase along with the length of the text. 
+For the visualization of lexical diversity of each corpus, a mixed plot of bar graph and line graph is used to investigate two factors at the same time: type-token ratio (TTR), and the mean length of individual essay. The green bar graph represents the mean length of individual essay in each level group, and the endpoints of pink line graph indicates the mean TTR of each level. The y-axis for TTR is on the right side, and that of mean length of individual essay is on the right side. The reason we should look at both TTR and mean essay length is that TTR is text-length sensitive; it does not proportionally increase along with the length of the text. 
 
 As can be seen from the plot, TTR at level 3 peaks sharply, followed by an even sharper decline at level 4. Based on the fact that the mean essay length also increased between levels 3 and 4, the peak of TTR at level 3 has significance in terms of proficiency improvement. The substantial decrease at level 4 is somewhat expected since the average essay length has increased substantially at the same level. Upon comparison of the lowest and highest level, the plot reveals almost the same TTR value, which may be considered disappointing. There is, however, a striking difference in the average length of essays. Compared to level 2, the average essay length at level 5 is more than twice as long. Due to the fact that the TTR does not increase proportionally as the mean text length increases, it is inferred that there is a large difference in language proficiency between the groups. Across the stages of language development, it is confirmed that the proficiency of Korean language improves the most between level 2 and 3 since the level 3 learners show the greatest advance with regards to both TTR and mean text length compared to that of level 2.
+
 
 
 
 2. Syntactic complexity
 
 
-![Korean Learners Syntactic Complexity by Level](visual_aids/KLC_SC.jpg){width=65%}
+![Korean Learners Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-12-1.png){width=65%}
 ![Numeric Values of Korean Learners Syntactic Complexity by Level](visual_aids/KLC_SC_num.jpg){width=45%}
 
 
-In respect of syntactic complexity, the graph shows a steady increase across all levels. There was no unexpected change contrary to the result of lexical diversity, and the biggest leap in improvement occurred between level 3 and 4.
+In respect of syntactic complexity, the graph manifests a steady growth across all levels. There was no unexpected change contrary to the result of lexical diversity, and the biggest leap in improvement occurred between level 3 and 4.
 
 
 
 ### PELIC
 
-![Numeric Figures of PELIC Lexical Diversity by Level](visual_aids/PELIC_TTR.jpg){width=65%}
+![Numeric Figures of PELIC Lexical Diversity by Level](code_compile_files/figure-gfm/unnamed-chunk-11-2.png){width=65%}
 
 
 ![Numeric Values of PELIC Lexical Diversity by Level](visual_aids/PELIC_TTR_num.jpg){width=50%}
 
-In contrast with the TTR value of KLC, the TTR value of PELIC corpus does not exhibit lots of fluctuations between the levels. The TTR value for level 3 speakers of English is the lowest while the TTR value of level 2 speakers is the highest. Comparing the results between the lowest level and the highest level, the graph indicates that while the TTR values of each group are nearly the same, the mean length of essay increases by 1.9 times at level 5. On the graph, it appears that the greatest improvement occurs between levels 3 and 4, considering that the TTR value nearly remains the same during when the mean essay length increases by 20%.
+In contrast with the TTR value of KLC, the TTR value of PELIC corpus does not exhibit lots of fluctuations between the levels. The TTR value for level 3 speakers of English is the lowest while the TTR value of level 2 speakers is the highest. Comparing the results between the lowest level and the highest level, the graph indicates that while the TTR values of level 5 decreased by .03, the mean length of essay increases by 1.9 times at level 5. In light of the fact that the decreased amount of TTR is negligible but the increase in mean text length is considerable, we can conclude that there is also a stark difference in language proficiency between level 2 and level 5 in English learner groups. On the graph, it appears that the greatest improvement occurs between levels 3 and 4, considering that the TTR value nearly remains the same during when the mean essay length increases by 20%.
 
 
 
-![Numeric Figures of PELIC Syntactic Complexity by Level](visual_aids/PELIC_SC.jpg){width=65%}
+![Numeric Figures of PELIC Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-12-2.png){width=65%}
 
 ![Numeric Values of PELIC Syntactic Complexity by Level](visual_aids/PELIC_SC_num.jpg){width=50%}
 
-In terms on syntactic complexity, the tendency observed in the graph above does not differ from that of Korean learners. A stable improvement across the levels is shown, with the biggest leap occurring between level 2 and 3. Interesting point in this data is that there seems to be no meaningful improvement in the mean length of essay between level 3 to 5. This can be emanated from the typological feature of English as an analytic language.
-
+In terms on syntactic complexity, the tendency observed in the graph above does not differ from that of Korean learners. A stable improvement across the levels is shown, with the biggest leap occurring between level 2 and 3. Interesting point in this data is that there seems to be no meaningful improvement in the mean length of essay between level 3 to 5. 
 
 
 ## Intergroup analysis
 
-### Lexical diversity
 
+Comparing the levels that display comparable sizes of mean essay length is also a meaningful approach since the length of an essay is an important factor to determine if the TTR value is significant. Level 3 of KLC and level 4 of PELIC contain almost identical value of TTR and mean text length, which denotes that they own a similar degree of L2 proficiency. This means that English learners obtain the comparable competence of language at level 4 whereas Korean learners obtain an equivalent degree of L2 proficiency at level 3. Hence, we can conclude that Korean learners attain the higher level of proficiency of L2 at an earlier stage than English learners in terms of lexical diversity. 
 
-Comparing the levels that display comparable sizes of mean essay length is also a meaningful approach since the length of an essay is an important factor to determine if the TTR value is significant. Level 4 of KLC and level 3 of PELIC contain almost identical value of TTR and mean text length, which denotes that they own a similar degree of L2 proficiency. This means that English learners obtain the comparable competence of language at level 3 whereas Korean learners obtain an equivalent degree of L2 proficiency at level 4. Hence, we can conclude that English learners attain the higher level of proficiency of L2 earlier than Korean learners in terms of lexical diversity. 
+On the other hand, the graph shows the opposite result regarding syntactic complexity. The mean length of sentences at level 1 in both datasets is comparable. However, as the mean essay length of Korean learners increases faster than that of English learners, Korean learners overtake English learners at level 4. Furthermore, it is English learners who exhibit greater improvements at the early stages, in contrast to lexical diversity. However, the mean length of sentences of an advanced learner of Korean is longer than that of an advanced learner of English. Therefore, we can conclude that Korean learners acquire a higher level of syntactic complexity when they reach the most advanced level of L2 compared to English learners. This can be emanated from the typological feature of English as an analytic language. Since Korean is a synthetic language and it possesses an abundant number of morphemes whose function is to connect sentences, it is relatively easier to elongate sentences in Korean, although elongating sentences excessively carries the risk of ruining legibility. 
 
-
-### Syntactic complexity
-
-
-1. Level B1 vs. Level 3: PELIC has higher mean sentence length.
-   But, Level B2 vs. Level 4: KLC is A LOT higher.
-
-
-1. Answering to my research question..
-
-     **Between which levels does the language proficiency increase the most?**
-
--> KLC: Between level B1 and B2       //      PELIC: Between level 2 and 3.
-
-  **PELIC** shows greater improvement in earlier stage of learning.
-
-    **Is there any difference in terms of *syntactic complexity* in the same level of different L2 speakers?**
-
-  In Level B1 and Level 3, PELIC has higher mean sentence length, 
-  but in Level B2 and Level 4, KLC outdistance PELIC!
-  And this aspect persists in Level C1 and Level 5, too.
   
-  
-# Overall history and process of the project
+# Conclusion
+
+This project investigates the difference of lexical diversity and syntactic complexity among two learners’ group. One group comprises Korean learners whose first language is English, and the other group consists of English learners whose mother tongue is Korean. Regarding lexical diversity, Korean learners show the biggest improvement in L2 at an earlier stage than English learners. However, with regards to syntactic complexity, English learners demonstrates the biggest leap at an earlier stage than Korean learners. Considering that Korean is a synthetic language and has a rich pool of morphemes that connects sentences, it is inferable that this feature can be the result of the different typological feature of Korean and English.
+
+
+### Overall history and process of the project
+
+
