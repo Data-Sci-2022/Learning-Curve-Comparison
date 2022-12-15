@@ -97,6 +97,8 @@ KLC_clean <- KLC_eng %>%
     This warning is displayed once every 8 hours.
     Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 
+#### 1. Lexical diversity
+
 ``` r
 KLC_numtok <- KLC_clean %>% 
   unnest(num_token) %>% 
@@ -144,21 +146,9 @@ KLC_TTR <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>%
    group_by(Level) %>% 
    summarize(mean_text_len = mean(mean_text_len),
              TTR = round(mean(TTR), 4))
-
-KLC_TTR
 ```
 
-    # A tibble: 4 × 3
-      Level mean_text_len   TTR
-      <chr>         <dbl> <dbl>
-    1 2              111. 0.522
-    2 3              181. 0.568
-    3 4              324. 0.457
-    4 5              265. 0.523
-
 #### 2. Syntactic Complexity
-
-how to calculate syntactic complexity: compare average sentence length
 
 ``` r
 KLC_sent <- KLC_clean %>% 
@@ -325,10 +315,6 @@ PELIC_clean <- PELIC_clean %>%
 
 #### 1. Lexical Diversity
 
-how to calculate lexical diversity: how many different words are used in
-each person’s essay?; the number of *word type* divided by the number of
-*tokens*
-
 ``` r
 # cleaning POS data
 
@@ -375,9 +361,6 @@ PELIC_TTR <- lemPOS1 %>%
     `.groups` argument.
 
 #### 2. Syntactic Complexity
-
-how to calculate syntactic complexity: Long, complex sentences
-vs. short. simple sentences
 
 ``` r
 PELIC_syncom <- lemPOS1 %>% 
@@ -434,40 +417,51 @@ KLC_TTR
     4 5              265. 0.523
 
 ``` r
-PELIC_TTR
+PELIC_TTR %>% 
+  mutate(level_id = as.character(level_id)) %>% 
+  rename(Level = level_id)
 ```
 
     # A tibble: 4 × 3
-      level_id mean_text_len   TTR
-         <dbl>         <dbl> <dbl>
-    1        2          87.7 0.631
-    2        3         150.  0.567
-    3        4         188.  0.572
-    4        5         168.  0.607
+      Level mean_text_len   TTR
+      <chr>         <dbl> <dbl>
+    1 2              87.7 0.631
+    2 3             150.  0.567
+    3 4             188.  0.572
+    4 5             168.  0.607
 
 ``` r
-KLC_syncom
+KLC_syncom %>% 
+  mutate_all(funs(str_replace(., "A2", "2"))) %>% 
+  mutate_all(funs(str_replace(., "B1", "3"))) %>% 
+  mutate_all(funs(str_replace(., "B2", "4"))) %>% 
+  mutate_all(funs(str_replace(., "C1", "5"))) %>% 
+  mutate(mean_sent_len = as.numeric(mean_sent_len)) %>% 
+  mutate(mean_sent_len = round(mean_sent_len, 4))
 ```
 
     # A tibble: 4 × 2
       Level mean_sent_len
       <chr>         <dbl>
-    1 A2             12.6
-    2 B1             15.3
-    3 B2             25.7
-    4 C1             28.0
+    1 2              12.6
+    2 3              15.3
+    3 4              25.7
+    4 5              28.0
 
 ``` r
-PELIC_syncom
+PELIC_syncom %>% 
+  mutate(level_id = as.character(level_id)) %>% 
+  rename(Level = level_id) %>% 
+  mutate(mean_sent_len = round(mean_sent_len, 4))
 ```
 
     # A tibble: 4 × 2
-      level_id mean_sent_len
-         <dbl>         <dbl>
-    1        2          11.3
-    2        3          18.1
-    3        4          19.1
-    4        5          20.7
+      Level mean_sent_len
+      <chr>         <dbl>
+    1 2              11.3
+    2 3              18.1
+    3 4              19.1
+    4 5              20.7
 
 ### Data Visualization
 
@@ -483,7 +477,7 @@ KLC_TTR %>%
   labs(title = "Korean Learner Corpus TTR & Mean Length of Essay")
 ```
 
-![](code_compile_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](code_compile_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 PELIC_TTR %>% 
@@ -495,7 +489,7 @@ PELIC_TTR %>%
   labs(title = "PELIC TTR & Mean Length of Essay")
 ```
 
-![](code_compile_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
+![](code_compile_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
 
 #### Syntactic complexity
 
@@ -507,7 +501,7 @@ KLC_syncom %>%
   scale_y_continuous(limits = c(5,33))
 ```
 
-![](code_compile_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](code_compile_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 PELIC_syncom %>% 
@@ -517,4 +511,4 @@ PELIC_syncom %>%
   scale_y_continuous(limits = c(5,33))
 ```
 
-![](code_compile_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
+![](code_compile_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->

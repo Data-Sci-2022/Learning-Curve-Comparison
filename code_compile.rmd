@@ -53,7 +53,12 @@ KLC_clean <- KLC_eng %>%
   left_join(KLC_eng, .,  by="ID") %>% 
   relocate(num_token, .after = ID) %>% 
   select(-c(Gender, Topic))
+```
 
+
+#### 1. Lexical diversity
+
+```{r}
 KLC_numtok <- KLC_clean %>% 
   unnest(num_token) %>% 
   mutate_all(funs(str_replace(., "A1", "2"))) %>% 
@@ -91,8 +96,6 @@ KLC_TTR <- left_join(KLC_numdist, KLC_numtok, by = "ID") %>%
 
 #### 2. Syntactic Complexity
 
-how to calculate syntactic complexity: compare average sentence length  
-
 
 ```{r, error=TRUE}
 
@@ -125,7 +128,7 @@ KLC_syncom <- KLC_morph %>%
 
 ### KLC final
 
-```{r, cache = TRUE}
+```{r}
 KLC_TTR
 KLC_syncom
 ```
@@ -138,7 +141,7 @@ KLC_syncom
 ### Data Import
 
 
-```{r, cache = TRUE}
+```{r}
 PELIC_ans <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/answer.csv")
 
 PELIC_crs <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/raw/master/corpus_files/course.csv")
@@ -153,7 +156,7 @@ PELIC_ques <- read_csv("https://github.com/ELI-Data-Mining-Group/PELIC-dataset/r
 ### Data manipulation
 
 ** sorting out columns needed
-```{r, cache = TRUE}
+```{r}
 
 PELIC_scr1 <- PELIC_scr %>% 
   select(anon_id, MTELP_Conv_Score, Writing_Sample)
@@ -175,7 +178,7 @@ PELIC_ques1 <- PELIC_ques %>%
 
 ** Joining all the columns in one dataframe
 
-```{r, cache = TRUE}
+```{r}
 PELIC1 <- left_join(PELIC_ans1, PELIC_crs1, by = "course_id") %>%  
   relocate(c(level_id), .after = course_id)
 PELIC2 <- left_join(PELIC1, PELIC_id1,by = "anon_id")
@@ -195,9 +198,8 @@ PELIC_clean <- PELIC_clean %>%
 
 #### 1. Lexical Diversity
 
-how to calculate lexical diversity: how many different words are used in each person's essay?; the number of _word type_ divided by the number of _tokens_
 
-```{r, error=TRUE}
+```{r}
 
 # cleaning POS data
 
@@ -236,9 +238,8 @@ PELIC_TTR <- lemPOS1 %>%
 
 #### 2. Syntactic Complexity
 
-how to calculate syntactic complexity: Long, complex sentences vs. short. simple sentences
 
-```{r, error=TRUE}
+```{r}
 
 PELIC_syncom <- lemPOS1 %>% 
   group_by(anon_id) %>% 
@@ -257,7 +258,7 @@ PELIC_syncom <- lemPOS1 %>%
 
 ## PELIC final
 
-```{r, cache = TRUE}
+```{r}
 PELIC_TTR
 PELIC_syncom
 ```
@@ -266,7 +267,7 @@ PELIC_syncom
 
 ## Comparison between KLC and PELIC
 
-```{r, cache = TRUE}
+```{r}
 KLC_TTR
 PELIC_TTR %>% 
   mutate(level_id = as.character(level_id)) %>% 
@@ -317,7 +318,7 @@ PELIC_TTR %>%
 #### Syntactic complexity
 
 
-```{r, cache = TRUE}
+```{r}
 
 KLC_syncom %>% 
   ggplot(aes(x = Level, y = mean_sent_len, group = 1)) + 
