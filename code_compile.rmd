@@ -279,6 +279,7 @@ KLC_syncom %>%
   mutate_all(funs(str_replace(., "C1", "5"))) %>% 
   mutate(mean_sent_len = as.numeric(mean_sent_len)) %>% 
   mutate(mean_sent_len = round(mean_sent_len, 4))
+
 PELIC_syncom %>% 
   mutate(level_id = as.character(level_id)) %>% 
   rename(Level = level_id) %>% 
