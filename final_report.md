@@ -65,15 +65,15 @@ in Korean NLP, words are tokenized by morpheme boundaries.
 <figure>
 <img src="code_compile_files/figure-gfm/unnamed-chunk-11-1.png"
 style="width:65.0%" alt="Korean Learners Lexical Diversity by Level" />
-<figcaption aria-hidden="true">Korean Learners Lexical Diversity by
-Level</figcaption>
+<figcaption aria-hidden="true"><em>Korean Learners Lexical Diversity by
+Level</em></figcaption>
 </figure>
 
 <figure>
 <img src="visual_aids/KLC_TTR_num.jpg" style="width:50.0%"
 alt="Numeric Values of Korean Learners Lexical Diversity by Level" />
-<figcaption aria-hidden="true">Numeric Values of Korean Learners Lexical
-Diversity by Level</figcaption>
+<figcaption aria-hidden="true"><em>Numeric Values of Korean Learners
+Lexical Diversity by Level</em></figcaption>
 </figure>
 
 For the visualization of lexical diversity of each corpus, a mixed plot
@@ -107,11 +107,20 @@ text length compared to that of level 2.
 
 2.  Syntactic complexity
 
+<figure>
 <img src="code_compile_files/figure-gfm/unnamed-chunk-13-1.png"
 style="width:65.0%"
 alt="Korean Learners Syntactic Complexity by Level" />
+<figcaption aria-hidden="true"><em>Korean Learners Syntactic Complexity
+by Level</em></figcaption>
+</figure>
+
+<figure>
 <img src="visual_aids/KLC_SC_num.jpg" style="width:45.0%"
 alt="Numeric Values of Korean Learners Syntactic Complexity by Level" />
+<figcaption aria-hidden="true"><em>Numeric Values of Korean Learners
+Syntactic Complexity by Level</em></figcaption>
+</figure>
 
 In respect of syntactic complexity, the graph manifests a steady growth
 across all levels. There was no unexpected change contrary to the result
@@ -122,17 +131,16 @@ between level 3 and 4.
 
 <figure>
 <img src="code_compile_files/figure-gfm/unnamed-chunk-11-2.png"
-style="width:65.0%"
-alt="Numeric Figures of PELIC Lexical Diversity by Level" />
-<figcaption aria-hidden="true">Numeric Figures of PELIC Lexical
-Diversity by Level</figcaption>
+style="width:65.0%" alt="PELIC Lexical Diversity by Level" />
+<figcaption aria-hidden="true"><em>PELIC Lexical Diversity by
+Level</em></figcaption>
 </figure>
 
 <figure>
 <img src="visual_aids/PELIC_TTR_num.jpg" style="width:50.0%"
 alt="Numeric Values of PELIC Lexical Diversity by Level" />
-<figcaption aria-hidden="true">Numeric Values of PELIC Lexical Diversity
-by Level</figcaption>
+<figcaption aria-hidden="true"><em>Numeric Values of PELIC Lexical
+Diversity by Level</em></figcaption>
 </figure>
 
 In contrast with the TTR value of KLC, the TTR value of PELIC corpus
@@ -152,17 +160,16 @@ increases by 20%.
 
 <figure>
 <img src="code_compile_files/figure-gfm/unnamed-chunk-13-2.png"
-style="width:65.0%"
-alt="Numeric Figures of PELIC Syntactic Complexity by Level" />
-<figcaption aria-hidden="true">Numeric Figures of PELIC Syntactic
-Complexity by Level</figcaption>
+style="width:65.0%" alt="PELIC Syntactic Complexity by Level" />
+<figcaption aria-hidden="true"><em>PELIC Syntactic Complexity by
+Level</em></figcaption>
 </figure>
 
 <figure>
 <img src="visual_aids/PELIC_SC_num.jpg" style="width:50.0%"
 alt="Numeric Values of PELIC Syntactic Complexity by Level" />
-<figcaption aria-hidden="true">Numeric Values of PELIC Syntactic
-Complexity by Level</figcaption>
+<figcaption aria-hidden="true"><em>Numeric Values of PELIC Syntactic
+Complexity by Level</em></figcaption>
 </figure>
 
 In terms on syntactic complexity, the tendency observed in the graph

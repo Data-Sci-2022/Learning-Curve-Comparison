@@ -27,10 +27,11 @@ To evaluate the level of language proficiency and provide a comparison within ea
 1. Lexical Diversity
 
 
-![Korean Learners Lexical Diversity by Level](code_compile_files/figure-gfm/unnamed-chunk-11-1.png){width=65%}
+![_Korean Learners Lexical Diversity by Level_](code_compile_files/figure-gfm/unnamed-chunk-11-1.png){width=65%}
 
 
-![Numeric Values of Korean Learners Lexical Diversity by Level](visual_aids/KLC_TTR_num.jpg){width=50%}
+![_Numeric Values of Korean Learners Lexical Diversity by Level_](visual_aids/KLC_TTR_num.jpg){width=50%}
+
 
 For the visualization of lexical diversity of each corpus, a mixed plot of bar graph and line graph is used to investigate two factors at the same time: type-token ratio (TTR), and the mean length of individual essay. The green bar graph represents the mean length of individual essay in each level group, and the endpoints of pink line graph indicates the mean TTR of each level. The y-axis for TTR is on the right side, and that of mean length of individual essay is on the right side. The reason we should look at both TTR and mean essay length is that TTR is text-length sensitive; it does not proportionally increase along with the length of the text. 
 
@@ -42,8 +43,10 @@ As can be seen from the plot, TTR at level 3 peaks sharply, followed by an even 
 2. Syntactic complexity
 
 
-![Korean Learners Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-13-1.png){width=65%}
-![Numeric Values of Korean Learners Syntactic Complexity by Level](visual_aids/KLC_SC_num.jpg){width=45%}
+![_Korean Learners Syntactic Complexity by Level_](code_compile_files/figure-gfm/unnamed-chunk-13-1.png){width=65%}
+
+
+![_Numeric Values of Korean Learners Syntactic Complexity by Level_](visual_aids/KLC_SC_num.jpg){width=45%}
 
 
 In respect of syntactic complexity, the graph manifests a steady growth across all levels. There was no unexpected change contrary to the result of lexical diversity, and the biggest leap in improvement occurred between level 3 and 4.
@@ -52,18 +55,18 @@ In respect of syntactic complexity, the graph manifests a steady growth across a
 
 ### PELIC
 
-![Numeric Figures of PELIC Lexical Diversity by Level](code_compile_files/figure-gfm/unnamed-chunk-11-2.png){width=65%}
+![_PELIC Lexical Diversity by Level_](code_compile_files/figure-gfm/unnamed-chunk-11-2.png){width=65%}
 
 
-![Numeric Values of PELIC Lexical Diversity by Level](visual_aids/PELIC_TTR_num.jpg){width=50%}
+![_Numeric Values of PELIC Lexical Diversity by Level_](visual_aids/PELIC_TTR_num.jpg){width=50%}
 
 In contrast with the TTR value of KLC, the TTR value of PELIC corpus does not exhibit lots of fluctuations between the levels. The TTR value for level 3 speakers of English is the lowest while the TTR value of level 2 speakers is the highest. Comparing the results between the lowest level and the highest level, the graph indicates that while the TTR values of level 5 decreased by .03, the mean length of essay increases by 1.9 times at level 5. In light of the fact that the decreased amount of TTR is negligible but the increase in mean text length is considerable, we can conclude that there is also a stark difference in language proficiency between level 2 and level 5 in English learner groups. On the graph, it appears that the greatest improvement occurs between levels 3 and 4, considering that the TTR value nearly remains the same during when the mean essay length increases by 20%.
 
 
 
-![Numeric Figures of PELIC Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-13-2.png){width=65%}
+![_PELIC Syntactic Complexity by Level_](code_compile_files/figure-gfm/unnamed-chunk-13-2.png){width=65%}
 
-![Numeric Values of PELIC Syntactic Complexity by Level](visual_aids/PELIC_SC_num.jpg){width=50%}
+![_Numeric Values of PELIC Syntactic Complexity by Level_](visual_aids/PELIC_SC_num.jpg){width=50%}
 
 In terms on syntactic complexity, the tendency observed in the graph above does not differ from that of Korean learners. A stable improvement across the levels is shown, with the biggest leap occurring between level 2 and 3. Interesting point in this data is that there seems to be no meaningful improvement in the mean length of essay between level 3 to 5. 
 
