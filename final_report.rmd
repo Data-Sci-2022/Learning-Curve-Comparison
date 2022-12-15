@@ -83,4 +83,4 @@ This project investigates the difference of lexical diversity and syntactic comp
 
 ### Overall history and process of the project
 
-
+Luckily, I was able to find corpus that fit into the purpose of my research. Moreover, they were well-organized, so there was no need to wrestle with the data. The problems and issues that I encountered during my journey was mostly related to the data tokenization. Sometimes I was not sure what code I should use, sometimes I know what code should be used in a case but not sure _how_ to use it, and many many times R crashed because of the huge amount of tokenized data. But, with the help of the classmates and Dan, the project is successfully done.
