@@ -42,7 +42,7 @@ As can be seen from the plot, TTR at level 3 peaks sharply, followed by an even 
 2. Syntactic complexity
 
 
-![Korean Learners Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-12-1.png){width=65%}
+![Korean Learners Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-13-1.png){width=65%}
 ![Numeric Values of Korean Learners Syntactic Complexity by Level](visual_aids/KLC_SC_num.jpg){width=45%}
 
 
@@ -61,7 +61,7 @@ In contrast with the TTR value of KLC, the TTR value of PELIC corpus does not ex
 
 
 
-![Numeric Figures of PELIC Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-12-2.png){width=65%}
+![Numeric Figures of PELIC Syntactic Complexity by Level](code_compile_files/figure-gfm/unnamed-chunk-13-2.png){width=65%}
 
 ![Numeric Values of PELIC Syntactic Complexity by Level](visual_aids/PELIC_SC_num.jpg){width=50%}
 
